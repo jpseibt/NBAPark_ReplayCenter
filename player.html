@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Controller</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+</head>
+<body class="player-body">
+
+  <div id="join-overlay">
+    <button id="join-btn">TAP TO JOIN GAME</button>
+  </div>
+
+  <div id="game-container" style="display: none;">
+    <div id="lang-selector">
+      <button class="btn lang-btn" onclick="setLanguage('en')">
+        <img src="/static/assets/united_states_flag_icon.svg"> EN
+      </button>
+      <button class="btn lang-btn" onclick="setLanguage('pt')">
+        <img src="/static/assets/brazil_flag_icon.svg"> PT
+      </button>
+      <button class="btn lang-btn" onclick="setLanguage('es')">
+        <img src="/static/assets/spain_flag_icon.svg"> ES
+      </button>
+    </div>
+
+    <div id="player-badge"></div>
+
+    <h2 id="question-text">Waiting for Master...</h2>
+    <div id="options-container"></div>
+    <div id="action-container"></div>
+  </div>
+
+  <img src="/static/assets/pattern_field.png" class="pattern-field" alt="Field">
+  <img src="/static/assets/pattern_bounce.png" class="pattern-bounce" alt="Ball Bouncing">
+  <img src="/static/assets/nba_replay_center.png" class="brand-logo-pl" alt="NBA Replay Center">
+
+
+  <script src="/static/player.js"></script>
+</body>
+</html>

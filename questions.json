@@ -1,0 +1,58 @@
+[
+  {
+    "id": 0,
+    "text": {
+      "en": "If you were the NBA Replay Center referee, this play would be:",
+      "es": "Si fueras el árbitro del NBA Replay Center, esta jugada sería:",
+      "pt": "Se você fosse o árbitro do NBA Replay Center, esta jogada seria:"
+    },
+    "options": {
+      "en": ["3-point shot", "2-point shot"],
+      "es": ["Tiro de 3 puntos", "Tiro de 2 puntos"],
+      "pt": ["Arremesso de 3 pontos", "Arremesso de 2 pontos"]
+    },
+    "correct_idx": 1
+  },
+  {
+    "id": 1,
+    "text": {
+      "en": "If you were the NBA Replay Center referee, this play would be:",
+      "es": "Si fueras el árbitro del NBA Replay Center, esta jugada sería:",
+      "pt": "Se você fosse o árbitro do NBA Replay Center, esta jogada seria:"
+    },
+    "options": {
+      "en": ["2 more points for Charlotte Hornets", "Time expired, the points do not count"],
+      "es": ["2 puntos más para Charlotte Hornets", "Tiempo expirado, no valen los puntos"],
+      "pt": ["Mais 2 pontos para Charlotte Hornets", "Tempo expirado, não valem os pontos"]
+    },
+    "correct_idx": 1
+  },
+  {
+    "id": 2,
+    "text": {
+      "en": "If you were the NBA Replay Center referee, this play would be:",
+      "es": "Si fueras el árbitro del NBA Replay Center, esta jugada sería:",
+      "pt": "Se você fosse o árbitro do NBA Replay Center, esta jogada seria:"
+    },
+    "options": {
+      "en": ["Possession for L.A Lakers (yellow uniform)", "Possession for Atlanta Hawks (red uniform)"],
+      "es": ["Posesión de L.A Lakers (uniforme amarillo)", "Posesión de Atlanta Hawks (uniforme rojo)"],
+      "pt": ["Posse do L.A Lakers (uniforme amarelo)", "Posse do Atlanta Hawks (uniforme vermelho)"]
+    },
+    "correct_idx": 1
+  },
+  {
+    "id": 3,
+    "text": {
+      "en": "If you were the NBA Replay Center referee, this play would be:",
+      "es": "Si fueras el árbitro del NBA Replay Center, esta jugada sería:",
+      "pt": "Se você fosse o árbitro do NBA Replay Center, esta jogada seria:"
+    },
+    "options": {
+      "en": ["3 more points for Brooklyn Nets", "Time expired, the points do not count"],
+      "es": ["3 puntos más para Brooklyn Nets", "Tiempo expirado, no valen los puntos"],
+      "pt": ["Mais 3 pontos para Brooklyn Nets", "Tempo expirado, não valem os pontos"]
+    },
+    "correct_idx": 1
+  }
+]

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Live Leaderboard</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+</head>
+<body class="leaderboard-body">
+  <button class="btn btn-fullscreen" onclick="document.documentElement.requestFullscreen(); this.style.display='none'">
+      ⛶ Fullscreen
+  </button>
+
+  <img src="/static/assets/nba_replay_center.png" class="brand-logo-lb" alt="NBA Replay Center">
+  <div id="leaderboard-container">
+    <h1 id="leaderboard-title" class="leaderboard-title">
+      <span class="glow-text">AWAITING RESULTS...</span>
+    </h1>
+    <div id="ranking-list"></div>
+  </div>
+
+  <script src="/static/leaderboard.js"></script>
+</body>
+</html>

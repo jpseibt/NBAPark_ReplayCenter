@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Debug Console</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+</head>
+<body class="debug-body">
+
+  <h2>Engine Debug Panel</h2>
+
+  <button class="debug-btn" onclick="send_command('START_QUESTION')">Start Question</button>
+  <button class="debug-btn" onclick="send_command('REVEAL')">Reveal Answer</button>
+  <button class="debug-btn debug-btn-reset" onclick="send_command('RESET')">Hard Reset</button>
+
+  <hr class="debug-hr">
+
+  <div id="connection-status" class="debug-status">Connecting to engine...</div>
+
+  <h3>Server Memory (Global State)</h3>
+  <pre id="state-dump" class="debug-dump">
+    Awaiting state from server...
+  </pre>
+
+  <h3>Server Memory (Private State)</h3>
+  <pre id="private-state-dump" class="debug-dump">
+    Awaiting private state from server...
+  </pre>
+
+  <script src="/static/debug.js"></script>
+</body>
+</html>

@@ -1,0 +1,423 @@
+/* Base Button */
+.btn {
+  font-weight: bold;
+
+  /* The "Shiny" Bevel Matrix */
+  background: linear-gradient(145deg, #21262d, #161b22);
+  border: 1px solid #30363d;
+  border-radius: 12px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), /* Top inner highlight */
+              0 6px 12px rgba(0, 0, 0, 0.4);          /* Bottom drop shadow */
+
+  cursor: pointer;
+  transition: all 0.1s ease-out;
+  transform: translateZ(0); /* Force GPU compositing */
+
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.97);
+  box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.6);
+  filter: brightness(0.8);
+}
+
+.btn.selected {
+  background: linear-gradient(145deg, #005cc5, #003d82);
+  border-color: #00aaff;
+  box-shadow: 0 0 20px rgba(0, 170, 255, 0.4),
+              inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.glow-text {
+  background: var(--accent-color);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+
+  text-shadow:
+    0 0 10px var(--accent-color),
+    0 0 25px var(--accent-color);
+}
+
+.btn-fullscreen {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #333;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/*
+ ==================================================
+  DEBUG UI
+ ==================================================
+*/
+.debug-body {
+  font-family: monospace;
+  background: #1e1e1e;
+  color: #d4d4d4;
+  padding: 20px;
+}
+
+.debug-btn {
+  padding: 10px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.debug-btn-reset {
+  color: red;
+}
+
+.debug-hr {
+  border-color: #444;
+  margin: 20px 0;
+}
+
+.debug-status {
+  color: yellow;
+  margin-bottom: 10px;
+}
+
+.debug-dump {
+  background: #000;
+  padding: 15px;
+  border: 1px solid #555;
+  overflow-x: auto;
+}
+
+/*
+ ==================================================
+  OPERATOR UI
+ ==================================================
+*/
+.operator-body {
+  font-family: 'Segoe UI', sans-serif;
+  background: radial-gradient(circle at top, #1a1f2b 0%, #090c10 100%);
+  color: #ffffff;
+  padding: 30px;
+  margin: 0;
+}
+
+.operator-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #333;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+}
+
+.operator-stats {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+/* Control Buttons Layout */
+.operator-controls {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.controls-gameplay {
+  display: flex;
+  gap: 20px;
+}
+
+.controls-system {
+  display: flex;
+  gap: 20px;
+}
+
+.btn-op {
+  padding: 20px 40px;
+  font-size: 20px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.btn-op-start { --accent-color: #00aaff; }
+.btn-op-reveal { --accent-color: #7f65ff; }
+.btn-op-results { --accent-color: #00ffaa; }
+.btn-op-reset { --accent-color: #ff2222; }
+
+/* Question Preview Card */
+.operator-preview {
+  padding: 20px;
+
+  background: rgba(34, 38, 43, 0.6);
+  backdrop-filter: blur(4px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.operator-preview h3 { margin-top: 0; color: #aaa; }
+.operator-preview h2 { margin: 10px 0; }
+
+/* Player Matrix */
+.operator-matrix {
+  width: 100%;
+  border-collapse: collapse;
+
+  background: rgba(34, 38, 43, 0.6);
+  backdrop-filter: blur(4px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.operator-matrix th {
+  padding: 15px;
+  text-align: left;
+  color: #aaa;
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+.operator-matrix td {
+  padding: 15px;
+  border-top: 1px solid #333;
+  font-size: 18px;
+}
+
+.status-locked { color: #28a745; font-weight: bold; }
+.status-waiting { color: #ffaa00; font-style: italic; }
+
+/* Watermark Logo */
+.brand-logo-op {
+  width: 120px;
+  pointer-events: none; /* Prevents accidental taps */
+}
+
+/*
+ ==================================================
+  PLAYER UI
+ ==================================================
+*/
+.player-body {
+  background: radial-gradient(circle at top, #1a1f2b 0%, #090c10 100%);
+  color: #ffffff;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+#question-text {
+  margin: 64px 20px 30px;
+  font-size: 28px;
+
+  max-width: 720px;
+  min-height: 98px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#options-container, #action-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.btn-option {
+  width: 100%;
+  max-width: 680px;
+  min-width: 480px;
+  min-height: 64px;
+
+  padding: 10px 20px;
+  margin: 10px 0;
+  font-size: 22px;
+
+  color: #e6edf3;
+}
+
+.btn-confirm {
+  background: linear-gradient(145deg, #2ea043, #238636);
+  border-color: #3fb950;
+  margin-top: 20px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+
+  --accent-color: #dddddd;
+}
+
+.btn-correct {
+  background: linear-gradient(145deg, #2ea043, #238636) !important;
+  border-color: #3fb950 !important;
+  box-shadow: 0 0 25px rgba(46, 160, 67, 0.6) !important;
+}
+
+.btn-wrong {
+  background: linear-gradient(145deg, #da3633, #b62324) !important;
+  border-color: #f85149 !important;
+  opacity: 0.6; /* Dim the wrong answers */
+}
+
+.feedback-text {
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 30px;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+
+/* The Audio Gatekeeper */
+#join-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(9, 12, 16, 0.85);
+  backdrop-filter: blur(8px); /* Blurs the game UI underneath */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+#join-btn {
+  padding: 30px 60px;
+  font-size: 32px;
+  font-weight: bold;
+  border-radius: 20px;
+  background: linear-gradient(145deg, #007bff, #0056b3);
+  color: white;
+  border: 2px solid #00aaff;
+  animation: pulse 2s infinite;
+}
+
+.pattern-field {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  width: 100px;
+  pointer-events: none; /* Prevents accidental taps */
+}
+
+.pattern-bounce {
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  width: 100px;
+  pointer-events: none; /* Prevents accidental taps */
+}
+
+/* Watermark Logo */
+.brand-logo-pl {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  width: 100px;
+  opacity: 0.3; /* Keeps it subtle so it doesn't distract from the game */
+  pointer-events: none; /* Prevents accidental taps */
+}
+
+/* Player Identity Badge */
+#player-badge {
+  justify-self: center;
+  width: fit-content;
+  margin-top: 30px;
+
+  font-size: 24px;
+  font-weight: bold;
+  --accent-color: #00aaff;
+
+  /* Subtle glassmorphism pill to separate it from the background pattern */
+  background: rgba(9, 12, 16, 0.7);
+  backdrop-filter: blur(4px);
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: 1px solid #30363d;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
+}
+
+#lang-selector {
+  position: absolute;
+  top: 10px;
+  left: 20px;
+  display: flex;
+  gap: 10px;
+  z-index: 10;
+}
+
+.lang-btn {
+  padding: 8px;
+  font-size: 14px;
+  font-weight: bold;
+  --accent-color: #ffffff;
+  color: #dddddd;
+}
+
+.lang-btn img {
+  width: 14px;
+  border-radius: 2px;
+}
+
+/* =========================================
+   LEADERBOARD STYLES (TV OUTPUT)
+   ========================================= */
+.leaderboard-body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: radial-gradient(circle at top, #404c68 0%, #090c10 100%);
+  background-attachment: fixed;
+
+  color: white;
+  text-align: center;
+  padding: 16px;
+  margin: 0;
+}
+
+.leaderboard-title {
+  font-size: 40px;
+  --accent-color: #ffffff;
+  text-transform: uppercase;
+  margin-top: 30px;
+  margin-bottom: 30px;
+  letter-spacing: 2px;
+}
+
+.player-row {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px auto;
+  padding: 10px 30px;
+  border-radius: 12px;
+  max-width: 900px;
+  font-size: 42px;
+  font-weight: bold;
+  letter-spacing: 1px;
+
+  background: rgba(24, 27, 31, 0.3);
+  backdrop-filter: blur(4px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
+}
+
+/* Podiums */
+.rank-0 {  --accent-color: #ffd700; } /* Gold */
+.rank-1 {  --accent-color: #c0c0c0; } /* Silver */
+.rank-2 {  --accent-color: #cd7f32; } /* Bronze */
+.rank-other { --accent-color: #4c5f80; }
+
+.player-name { text-transform: uppercase; }
+
+/* Watermark Logo */
+.brand-logo-lb {
+  width: 240px;
+  pointer-events: none; /* Prevents accidental taps */
+}
