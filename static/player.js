@@ -44,18 +44,13 @@ window.setLanguage = function(lang_code) {
   }
 };
 
-// 1. Hardware Identity
+// Hardware Identity
 const PLAYER_ID = window.location.pathname.substring(1);
 const PLAYER_NUM = PLAYER_ID.replace("player", "");
 const SERVER_URL = window.location.protocol + "//" + window.location.host;
 
 document.title = `[${PLAYER_ID}] ${document.title}`;
 document.getElementById("player-badge").innerHTML = `<span class="glow-text">PLAYER ${PLAYER_NUM}</span>`;
-
-// --- AUDIO SYSTEM INITIALIZATION ---
-const question_audio_src_dir = "/static/question_audio";
-const question_audio = new Audio(`${question_audio_src_dir}/0.mp3`);
-let last_played_question_db_id = -1;
 
 function lockFullScreen() {
   const doc = window.document.documentElement;
@@ -68,6 +63,11 @@ function lockFullScreen() {
     });
   }
 }
+
+// --- AUDIO SYSTEM INITIALIZATION ---
+const question_audio_src_dir = "/static/question_audio";
+const question_audio = new Audio(`${question_audio_src_dir}/0.mp3`);
+let last_question_db_id = -1;
 
 // THE GESTURE TRAP (force audio context to unlock and activate full-screen mode)
 document.getElementById("join-overlay").addEventListener("click", () => {
@@ -87,12 +87,26 @@ const socket = io(SERVER_URL, {
   auth: { client_id: PLAYER_ID }
 });
 
+socket.on("audio_command", (cmd) => {
+  // 1 = play, 2 = pause
+
+  if (cmd === 1){
+    if (latest_game_state && latest_game_state.stage !== 3) {
+      question_audio.currentTime = 0;
+      question_audio.play().catch(e => console.error(`Playback failed:`, e));
+    }
+  }
+  else if (cmd === 2) {
+    question_audio.pause();
+  }
+});
+
 // DOM Elements
 const question_text = document.getElementById("question-text");
 const options_container = document.getElementById("options-container");
 const action_container = document.getElementById("action-container");
 
-// 2. The Render Loop (Reacting to Server Authority)
+// Render
 socket.on("state_update", (game_state) => {
   latest_game_state = game_state;
   renderFrame(game_state);
@@ -109,7 +123,7 @@ function renderFrame(game_state) {
   // --- STATE: IDLE ---
   if (game_state.stage === 0) {
     question_text.innerText = UI_STRINGS[local_lang].waiting;
-    last_played_question_db_id = -1;
+    last_question_db_id = -1;
     return;
   }
 
@@ -117,11 +131,10 @@ function renderFrame(game_state) {
   if (game_state.stage === 1) {
     question_text.innerText = game_state.question_text[local_lang];
 
-    // Edge-triggered audio playback
-    if (game_state.question_db_id !== last_played_question_db_id) {
+    // Set audio track
+    if (game_state.question_db_id !== last_question_db_id) {
       question_audio.src = `${question_audio_src_dir}/${game_state.question_db_id}.mp3`;
-      question_audio.play().catch(e => console.error(`Playback failed:`, e));
-      last_played_question_db_id = game_state.question_db_id;
+      last_question_db_id = game_state.question_db_id;
     }
 
     // Render the alternatives

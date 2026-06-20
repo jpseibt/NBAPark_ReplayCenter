@@ -125,18 +125,8 @@
   margin-bottom: 20px;
 }
 
-.controls-gameplay {
-  display: flex;
-  gap: 20px;
-}
-
-.controls-system {
-  display: flex;
-  gap: 20px;
-}
-
 .btn-op {
-  padding: 20px 40px;
+  padding: 10px 10px;
   font-size: 20px;
   font-weight: bold;
   border: none;
@@ -146,9 +136,21 @@
 }
 
 .btn-op-start { --accent-color: #00aaff; }
-.btn-op-reveal { --accent-color: #7f65ff; }
+.btn-op-replay { --accent-color: #aaffc7; }
+.btn-op-reveal { --accent-color: #ffaaaa; }
 .btn-op-results { --accent-color: #00ffaa; }
 .btn-op-reset { --accent-color: #ff2222; }
+
+.controls-gameplay {
+  display: flex;
+  gap: 10px;
+}
+
+.controls-system {
+  display: flex;
+  padding: 10px 10px;
+  gap: 10px;
+}
 
 /* Question Preview Card */
 .operator-preview {

@@ -93,7 +93,7 @@ def trigger_resolume_column():
 
   try:
     resolume_client.send_message(osc_address, 1)
-    print(f"[OSC] Fired \"{osc_address}\"")
+    print(f"[OSC] Send int 1 to: \"{osc_address}\"")
   except Exception as e:
     print(f"[OSC] Error: Failed to send UDP packet \"{osc_address}\"")
 
@@ -316,6 +316,14 @@ async def on_confirm_option(sid):
   print(f"[{player['id']}] LOCKED IN option {player['selected_option']}")
   await sio.emit("state_update", game_state)
 
+#------------------------------
+# Audio (emmited on each admin_command)
+#
+class AudioCommand(IntEnum):
+  PLAY = 1
+  PAUSE = 2
+
+curr_audio_cmd = 0
 
 @sio.on("admin_command")
 async def on_admin_command(sid, data):
@@ -330,6 +338,8 @@ async def on_admin_command(sid, data):
   # The State Machine Routing
   if action == "START_QUESTION":
     process_cmd_start()
+  elif action == "REPLAY":
+    process_cmd_replay()
   elif action == "REVEAL":
     process_cmd_reveal()
   elif action == "RESULTS":
@@ -342,19 +352,25 @@ async def on_admin_command(sid, data):
     print(f"Unknown admin action: {action}")
     return
 
-  # Broadcast the world state
-  # Because we mutated the global dictionary, we just blast the entire memory 
-  # block to all connected clients. They will overwrite their local state instantly.
+  # Broadcast the world state to all connected clients
   await sio.emit("state_update", game_state)
+
+  if curr_audio_cmd > 0:
+    await sio.emit("audio_command", curr_audio_cmd)
+    print(f"[Audio] Send command: {curr_audio_cmd}")
 
 
 #==================================================
 # COMMAND HELPERS
 #==================================================
 def process_cmd_start():
+  global curr_audio_cmd
+  curr_audio_cmd = 1
+
   # STATE GUARD: Only advance if in IDLE or REVEAL state
   if game_state["stage"] == GameStage.QUESTION_ACTIVE.value:
     print("Ignored START_QUESTION: A question is already active.")
+    curr_audio_cmd = 0
     return
 
   # Advance question index
@@ -384,7 +400,15 @@ def process_cmd_start():
   print(f"--- QUESTION {game_state['curr_question_idx']} (ID: {game_state['question_db_id']}) STARTED ---")
   trigger_resolume_column()
 
+def process_cmd_replay():
+  global curr_audio_cmd
+  curr_audio_cmd = 1
+  trigger_resolume_column()
+
 def process_cmd_reveal():
+  global curr_audio_cmd
+  curr_audio_cmd = 2
+
   # STATE GUARD: Only reveal if on QUESTION_ACTIVE state
   if game_state["stage"] != GameStage.QUESTION_ACTIVE.value:
     return
@@ -400,6 +424,9 @@ def process_cmd_reveal():
   print(f"--- REVEALED QUESTION {game_state['curr_question_idx']} ---")
 
 def process_cmd_reset():
+  global curr_audio_cmd
+  curr_audio_cmd = 2
+
   # Reset the entire memory
   game_state["stage"] = GameStage.IDLE.value
   game_state["curr_question_idx"] = -1
@@ -419,6 +446,9 @@ def process_cmd_reset():
   trigger_resolume_column()
 
 def process_cmd_results():
+  global curr_audio_cmd
+  curr_audio_cmd = 2
+
   # Forces the game to end and displays the leaderboard
   game_state["stage"] = GameStage.LEADERBOARD.value
   game_state["curr_question_idx"] = len(QUESTION_DB)
