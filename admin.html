@@ -1,10 +1,10 @@
-<!DOCTYPE html> <html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Operator Console</title>
   <link rel="stylesheet" href="/static/style.css">
   <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
-
 </head>
 <body class="operator-body">
 
@@ -18,6 +18,19 @@
   </div>
 
   <div class="operator-controls">
+    <dialog id="confirm-dialog" class="operator-dialog">
+      <h3>CONFIRM COMMAND</h3>
+      <p id="dialog-message">_</p>
+      <div class="dialog-actions">
+        <button class="btn btn-op btn-op-confirm" id="dialog-btn-confirm">
+          <span class="glow-text">YES</span>
+        </button>
+        <button class="btn btn-op btn-op-cancel" id="dialog-btn-cancel">
+          <span class="glow-text">CANCEL</span>
+        </button>
+      </div>
+    </dialog>
+
     <div class="controls-gameplay">
       <button class="btn btn-op btn-op-start" onclick="send_command('START_QUESTION')">
         <span class="glow-text">▶ START</span>

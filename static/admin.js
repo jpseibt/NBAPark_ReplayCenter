@@ -1,5 +1,7 @@
 const SERVER_URL = window.location.protocol + "//" + window.location.host;
 
+let latest_game_state = null;
+
 const socket = io(SERVER_URL, {
   auth: { client_id: "admin" }
 });
@@ -9,6 +11,27 @@ const online_stats = document.getElementById("online-stats");
 const preview_stage = document.getElementById("preview-stage");
 const preview_text = document.getElementById("preview-text");
 const matrix_body = document.getElementById("matrix-body");
+
+const confirm_dialog = document.getElementById("confirm-dialog");
+const dialog_message = document.getElementById("dialog-message");
+const btn_cancel = document.getElementById("dialog-btn-cancel");
+const btn_confirm = document.getElementById("dialog-btn-confirm");
+
+let pending_command = null; // Stores destructive commands for confirmation
+
+// Dialog Handlers
+btn_cancel.onclick = () => {
+  pending_command = null;
+  confirm_dialog.close(); // Hides the dialog
+};
+
+btn_confirm.onclick = () => {
+  if (pending_command) {
+    socket.emit("admin_command", { action: pending_command });
+    pending_command = null;
+  }
+  confirm_dialog.close();
+};
 
 // Network Event Listeners
 socket.on("connect", () => {
@@ -23,20 +46,42 @@ socket.on("disconnect", () => {
 
 // Command Emitter
 window.send_command = function(action_string) {
+  // Show dialog to confirm destructive commands
+  if (action_string === "RESULTS" && latest_game_state.stage !== 3) {
+    if (latest_game_state.stage != 0) {
+      pending_command = action_string;
+      dialog_message.innerText = "End the game and show the final leaderboard?";
+      confirm_dialog.showModal();
+    }
+    return;
+  }
+  else if (action_string === "RESET") {
+    pending_command = action_string;
+    dialog_message.innerText = "Reset scores and shuffle questions for new session?";
+    confirm_dialog.showModal();
+    return;
+  }
+
+  // Send non-destructive commands right away
   socket.emit("admin_command", { action: action_string });
 };
 
 // Helper array to convert 0,1,2,3 into A,B,C,D
-  const letters = ["A", "B", "C", "D", "E", "F"];
+const letters = ["A", "B", "C", "D", "E", "F"];
 
-// Render Loop
+// Render
 socket.on("state_update", (game_state) => {
-  // 1. Calculate Network Health
+  latest_game_state = game_state;
+  renderFrame(game_state);
+});
+
+function renderFrame(game_state) {
+  // Calculate Network Health
   const online_count = game_state.players.filter(p => p.is_online).length;
   online_stats.innerText = `Network: ${online_count}/6 Online`;
   online_stats.style.color = online_count === 6 ? "green" : "orange";
 
-  // 2. Update Question Preview
+  // Update Question Preview
   const stages = ["IDLE", "QUESTION ACTIVE", "REVEAL", "LEADERBOARD"];
   preview_stage.innerText = `STAGE: ${stages[game_state.stage]}`;
 
@@ -50,7 +95,7 @@ socket.on("state_update", (game_state) => {
     preview_text.innerText = `Q${game_state.curr_question_idx + 1}: ${game_state.question_text["pt"]}`;
   }
 
-  // 3. Render the Player Matrix
+  // Render the Player Matrix
   matrix_body.innerHTML = ""; // Clear old frame
 
   game_state.players.forEach(player => {
@@ -106,4 +151,4 @@ socket.on("state_update", (game_state) => {
 
     matrix_body.appendChild(tr);
   });
-});
+}

@@ -152,6 +152,51 @@
   gap: 10px;
 }
 
+/* Dialog pop-ups */
+.operator-dialog {
+  padding: 20px;
+
+  background: rgba(34, 38, 43, 0.6);
+  backdrop-filter: blur(4px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+
+  border: none;
+  border-radius: 8px;
+
+  text-align: center;
+  color: #ffffff;
+}
+
+.operator-dialog::backdrop {
+  background: rgba(9, 12, 16, 0.85);
+  backdrop-filter: blur(8px);
+}
+
+.operator-dialog h3 {
+  margin-top: 0;
+  color: #00aaff;
+}
+
+.operator-dialog p {
+  font-size: 20px;
+  margin-bottom: 30px;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.dialog-actions .btn-op {
+  flex: 1;
+  padding: 15px;
+  font-size: 18px;
+}
+
+.btn-op-confirm { --accent-color: #00ffaa; }
+.btn-op-cancel { --accent-color: #ff2222; }
+
 /* Question Preview Card */
 .operator-preview {
   padding: 20px;
