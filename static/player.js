@@ -89,7 +89,6 @@ const socket = io(SERVER_URL, {
 
 socket.on("audio_command", (cmd) => {
   // 1 = play, 2 = pause
-
   if (cmd === 1){
     if (latest_game_state && latest_game_state.stage !== 3) {
       question_audio.currentTime = 0;
