@@ -95,7 +95,59 @@ def trigger_resolume_column():
     resolume_client.send_message(osc_address, 1)
     print(f"[OSC] Send int 1 to: \"{osc_address}\"")
   except Exception as e:
-    print(f"[OSC] Error: Failed to send UDP packet \"{osc_address}\"")
+    print(f"[OSC] Error: Failed to send UDP packet \"{osc_address}\" | {e}")
+
+class PlayDirectionCmd(IntEnum):
+  REVERSE = 0
+  PAUSE = 1
+  FORWARD = 2
+
+
+def send_resolume_transport_playdirection(cmd):
+  offset = 0
+  if game_state["stage"] == GameStage.IDLE.value:
+    offset = -1
+  elif game_state["stage"] == GameStage.LEADERBOARD.value:
+    offset = len(QUESTION_DB)
+  else:
+    offset = game_state["question_db_id"]
+
+  col_value = resolume_first_question_col + offset
+
+  # Send the transport play direction command to the 4 clips.
+  # (each play have 4 different camera angles in their own layer)
+  for layer_num in range(1, 5):
+    osc_address = f"/composition/layers/{layer_num}/clips/{col_value}/transport/position/behaviour/playdirection"
+
+    try:
+      resolume_client.send_message(osc_address, cmd)
+      print(f"[OSC] Send int {cmd} to: \"{osc_address}\"")
+    except Exception as e:
+      print(f"[OSC] Error: Failed to send UDP packet \"{osc_address}\" | {e}")
+
+
+def send_resolume_transport_speed(amt):
+  offset = 0
+  if game_state["stage"] == GameStage.IDLE.value:
+    offset = -1
+  elif game_state["stage"] == GameStage.LEADERBOARD.value:
+    offset = len(QUESTION_DB)
+  else:
+    offset = game_state["question_db_id"]
+
+  col_value = resolume_first_question_col + offset
+
+  # Send the transport play direction command to the 4 clips.
+  # (each play have 4 different camera angles in their own layer)
+  for layer_num in range(1, 5):
+    osc_address = f"/composition/layers/{layer_num}/clips/{col_value}/transport/position/behaviour/speed"
+
+    try:
+      resolume_client.send_message(osc_address, amt)
+      print(f"[OSC] Send int {amt} to: \"{osc_address}\"")
+    except Exception as e:
+      print(f"[OSC] Error: Failed to send UDP packet \"{osc_address}\" | {e}")
+
 
 
 #==================================================
@@ -342,6 +394,14 @@ async def on_admin_command(sid, data):
     process_cmd_replay()
   elif action == "REVEAL":
     process_cmd_reveal()
+  elif action == "T_REVERSE":
+    process_cmd_transport_playdirection(PlayDirectionCmd.REVERSE.value)
+  elif action == "T_PAUSE":
+    process_cmd_transport_playdirection(PlayDirectionCmd.PAUSE.value)
+  elif action == "T_FORWARD":
+    process_cmd_transport_playdirection(PlayDirectionCmd.FORWARD.value)
+  elif action == "T_SLOW_TOGGLE":
+    process_cmd_transport_speed_toggle()
   elif action == "RESULTS":
     process_cmd_results()
   elif action == "RESET":
@@ -398,12 +458,15 @@ def process_cmd_start():
     player["is_confirmed"] = False
 
   print(f"--- QUESTION {game_state['curr_question_idx']} (ID: {game_state['question_db_id']}) STARTED ---")
-  trigger_resolume_column()
+  process_cmd_replay()
+
 
 def process_cmd_replay():
   global curr_audio_cmd
   curr_audio_cmd = 1
+  send_resolume_transport_playdirection(PlayDirectionCmd.FORWARD.value)
   trigger_resolume_column()
+
 
 def process_cmd_reveal():
   global curr_audio_cmd
@@ -422,6 +485,35 @@ def process_cmd_reveal():
       player["score"] += 1
 
   print(f"--- REVEALED QUESTION {game_state['curr_question_idx']} ---")
+
+
+def process_cmd_transport_playdirection(cmd):
+  global curr_audio_cmd
+  curr_audio_cmd = 2
+
+  # STATE GUARD: Only do transport action if not on IDLE or LEADERBOARD
+  if game_state["stage"] == GameStage.IDLE.value or game_state["stage"] == GameStage.LEADERBOARD.value:
+    return
+
+  send_resolume_transport_playdirection(cmd)
+
+
+# After the Resolume transport float conversion, cycle: [1x, 0.5x, 0.25x]
+speed_cycle = [0.251188, 0.165715, 0.109336]
+curr_speed_idx = 0
+
+def process_cmd_transport_speed_toggle():
+  global curr_speed_idx
+  global curr_audio_cmd
+  curr_audio_cmd = 2
+
+  # STATE GUARD: Only do transport action if not on IDLE or LEADERBOARD
+  if game_state["stage"] == GameStage.IDLE.value or game_state["stage"] == GameStage.LEADERBOARD.value:
+    return
+
+  curr_speed_idx = (curr_speed_idx + 1) % len(speed_cycle)
+  send_resolume_transport_speed(speed_cycle[curr_speed_idx])
+
 
 def process_cmd_reset():
   global curr_audio_cmd
@@ -444,6 +536,7 @@ def process_cmd_reset():
 
   print("--- GAME RESET (QUESTIONS SHUFFLED) ---")
   trigger_resolume_column()
+
 
 def process_cmd_results():
   global curr_audio_cmd

@@ -31,17 +31,34 @@
       </div>
     </dialog>
 
-    <div class="controls-gameplay">
-      <button class="btn btn-op btn-op-start" onclick="send_command('START_QUESTION')">
-        <span class="glow-text">▶ START</span>
-      </button>
-      <button class="btn btn-op btn-op-replay" onclick="send_command('REPLAY')">
-        <span class="glow-text">◀◀ REPLAY</span>
-      </button>
-      <button class="btn btn-op btn-op-reveal" onclick="send_command('REVEAL')">
-        <span class="glow-text">👁 REVEAL</span>
-      </button>
+    <div class="controls-left">
+      <div class="controls-gameplay">
+        <button class="btn btn-op btn-op-start" onclick="send_command('START_QUESTION')">
+          <span class="glow-text">▶ START</span>
+        </button>
+        <button class="btn btn-op btn-op-replay" onclick="send_command('REPLAY')">
+          <span class="glow-text">◀◀ REPLAY</span>
+        </button>
+        <button class="btn btn-op btn-op-reveal" onclick="send_command('REVEAL')">
+          <span class="glow-text">👁 REVEAL</span>
+        </button>
+      </div>
+      <div class="controls-transport">
+        <button class="btn btn-op btn-op-transport" onclick="send_command('T_REVERSE')">
+          <span class="glow-text">◀</span>
+        </button>
+        <button class="btn btn-op btn-op-transport" onclick="send_command('T_PAUSE')">
+          <span class="glow-text">| |</span>
+        </button>
+        <button class="btn btn-op btn-op-transport" onclick="send_command('T_FORWARD')">
+          <span class="glow-text">▶</span>
+        </button>
+        <button class="btn btn-op btn-op-transport" onclick="send_command('T_SLOW_TOGGLE')">
+          <span class="glow-text">▷|</span>
+        </button>
+      </div>
     </div>
+
     <div class="controls-system">
       <button class="btn btn-op btn-op-results" onclick="send_command('RESULTS')">
         <span class="glow-text">▤ RESULTS</span>

@@ -141,14 +141,32 @@
 .btn-op-results { --accent-color: #00ffaa; }
 .btn-op-reset { --accent-color: #ff2222; }
 
+.btn-op-transport {
+  --accent-color: #ffffff;
+  width: 80px;
+  height: 50px;
+}
+
+.controls-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
 .controls-gameplay {
+  display: flex;
+  gap: 10px;
+}
+
+.controls-transport {
   display: flex;
   gap: 10px;
 }
 
 .controls-system {
   display: flex;
-  padding: 10px 10px;
+  flex-direction: column;
   gap: 10px;
 }
 
