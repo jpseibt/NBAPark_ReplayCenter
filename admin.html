@@ -33,37 +33,37 @@
 
     <div class="controls-left">
       <div class="controls-gameplay">
-        <button class="btn btn-op btn-op-start" onclick="send_command('START_QUESTION')">
-          <span class="glow-text">▶ START</span>
+        <button id="btn-op-start" class="btn btn-op" onclick="send_command('START_QUESTION')">
+          <span class="glow-text">▶| START</span>
         </button>
-        <button class="btn btn-op btn-op-replay" onclick="send_command('REPLAY')">
+        <button id="btn-op-replay" class="btn btn-op" onclick="send_command('REPLAY')">
           <span class="glow-text">◀◀ REPLAY</span>
         </button>
-        <button class="btn btn-op btn-op-reveal" onclick="send_command('REVEAL')">
+        <button id="btn-op-reveal" class="btn btn-op" onclick="send_command('REVEAL')">
           <span class="glow-text">👁 REVEAL</span>
         </button>
       </div>
       <div class="controls-transport">
-        <button class="btn btn-op btn-op-transport" onclick="send_command('T_REVERSE')">
+        <button id="btn-trans-rev" class="btn btn-op btn-op-transport" onclick="send_command('T_REVERSE')">
           <span class="glow-text">◀</span>
         </button>
-        <button class="btn btn-op btn-op-transport" onclick="send_command('T_PAUSE')">
+        <button id="btn-trans-pause" class="btn btn-op btn-op-transport" onclick="send_command('T_PAUSE')">
           <span class="glow-text">| |</span>
         </button>
-        <button class="btn btn-op btn-op-transport" onclick="send_command('T_FORWARD')">
+        <button id="btn-trans-fwd" class="btn btn-op btn-op-transport" onclick="send_command('T_FORWARD')">
           <span class="glow-text">▶</span>
         </button>
-        <button class="btn btn-op btn-op-transport" onclick="send_command('T_SLOW_TOGGLE')">
+        <button id="btn-trans-speed" class="btn btn-op btn-op-transport" onclick="send_command('T_SLOW_TOGGLE')">
           <span class="glow-text">▷|</span>
         </button>
       </div>
     </div>
 
     <div class="controls-system">
-      <button class="btn btn-op btn-op-results" onclick="send_command('RESULTS')">
+      <button id="btn-op-results" class="btn btn-op" onclick="send_command('RESULTS')">
         <span class="glow-text">▤ RESULTS</span>
       </button>
-      <button class="btn btn-op btn-op-reset" onclick="send_command('RESET')">
+      <button id="btn-op-reset" class="btn btn-op" onclick="send_command('RESET')">
         <span class="glow-text">⏹ RESET</span>
       </button>
     </div>

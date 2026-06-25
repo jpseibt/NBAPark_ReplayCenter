@@ -41,6 +41,17 @@ INITIAL_PLAYERS = [
   for i in range(1, 7)
 ]
 
+#------------------------------
+# Transport playback variables
+#
+class PlayDirectionCmd(IntEnum):
+  REVERSE = 0
+  PAUSE = 1
+  FORWARD = 2
+
+# After the Resolume transport float conversion, cycle: [1x, 0.5x, 0.25x]
+speed_cycle = [0.251188, 0.165715, 0.109336]
+
 
 #==================================================
 # PUBLIC MEMORY (Broadcasted to Clients)
@@ -52,6 +63,8 @@ game_state = {
   "question_text": "",           # The string the tablets will render
   "options": [],                 # The array of strings for the buttons
   "correct_idx": -1,             # -1 when hidden, updated on REVEAL
+  "trans_playdirection": PlayDirectionCmd.FORWARD.value,
+  "trans_speed_idx": 0,
   "players": INITIAL_PLAYERS
 }
 
@@ -97,11 +110,6 @@ def trigger_resolume_column():
   except Exception as e:
     print(f"[OSC] Error: Failed to send UDP packet \"{osc_address}\" | {e}")
 
-class PlayDirectionCmd(IntEnum):
-  REVERSE = 0
-  PAUSE = 1
-  FORWARD = 2
-
 
 def send_resolume_transport_playdirection(cmd):
   offset = 0
@@ -144,7 +152,7 @@ def send_resolume_transport_speed(amt):
 
     try:
       resolume_client.send_message(osc_address, amt)
-      print(f"[OSC] Send int {amt} to: \"{osc_address}\"")
+      print(f"[OSC] Send float {amt} to: \"{osc_address}\"")
     except Exception as e:
       print(f"[OSC] Error: Failed to send UDP packet \"{osc_address}\" | {e}")
 
@@ -464,7 +472,11 @@ def process_cmd_start():
 def process_cmd_replay():
   global curr_audio_cmd
   curr_audio_cmd = 1
+
   send_resolume_transport_playdirection(PlayDirectionCmd.FORWARD.value)
+  send_resolume_transport_speed(speed_cycle[0])
+  game_state["trans_playdirection"] = PlayDirectionCmd.FORWARD.value
+  game_state["trans_speed_idx"] = 0
   trigger_resolume_column()
 
 
@@ -495,15 +507,11 @@ def process_cmd_transport_playdirection(cmd):
   if game_state["stage"] == GameStage.IDLE.value or game_state["stage"] == GameStage.LEADERBOARD.value:
     return
 
+  game_state["trans_playdirection"] = cmd
   send_resolume_transport_playdirection(cmd)
 
 
-# After the Resolume transport float conversion, cycle: [1x, 0.5x, 0.25x]
-speed_cycle = [0.251188, 0.165715, 0.109336]
-curr_speed_idx = 0
-
 def process_cmd_transport_speed_toggle():
-  global curr_speed_idx
   global curr_audio_cmd
   curr_audio_cmd = 2
 
@@ -511,8 +519,9 @@ def process_cmd_transport_speed_toggle():
   if game_state["stage"] == GameStage.IDLE.value or game_state["stage"] == GameStage.LEADERBOARD.value:
     return
 
-  curr_speed_idx = (curr_speed_idx + 1) % len(speed_cycle)
-  send_resolume_transport_speed(speed_cycle[curr_speed_idx])
+  new_speed_idx = (game_state["trans_speed_idx"] + 1) % len(speed_cycle)
+  game_state["trans_speed_idx"] = new_speed_idx
+  send_resolume_transport_speed(speed_cycle[new_speed_idx])
 
 
 def process_cmd_reset():
@@ -524,6 +533,8 @@ def process_cmd_reset():
   game_state["curr_question_idx"] = -1
   game_state["question_db_id"] = -1
   game_state["correct_idx"] = -1
+  game_state["trans_playdirection"] = PlayDirectionCmd.FORWARD.value
+  game_state["trans_speed_idx"] = 0
 
   for player in game_state["players"]:
     player["is_playing"] = False

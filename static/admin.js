@@ -8,6 +8,17 @@ const socket = io(SERVER_URL, {
 
 // DOM Elements
 const online_stats = document.getElementById("online-stats");
+
+const btn_start = document.getElementById("btn-op-start");
+const btn_replay = document.getElementById("btn-op-replay");
+const btn_reveal = document.getElementById("btn-op-reveal");
+const btn_results = document.getElementById("btn-op-results");
+const btn_reset = document.getElementById("btn-op-reset");
+const btn_trans_rev = document.getElementById("btn-trans-rev");
+const btn_trans_pause= document.getElementById("btn-trans-pause");
+const btn_trans_fwd = document.getElementById("btn-trans-fwd");
+const btn_trans_speed = document.getElementById("btn-trans-speed");
+
 const preview_stage = document.getElementById("preview-stage");
 const preview_text = document.getElementById("preview-text");
 const matrix_body = document.getElementById("matrix-body");
@@ -67,7 +78,8 @@ window.send_command = function(action_string) {
 };
 
 // Helper array to convert 0,1,2,3 into A,B,C,D
-const letters = ["A", "B", "C", "D", "E", "F"];
+const LETTERS = ["A", "B", "C", "D", "E", "F"];
+const SPEED_AMT = ["1.0x", "0.5x", "0.25x"];
 
 // Render
 socket.on("state_update", (game_state) => {
@@ -76,6 +88,8 @@ socket.on("state_update", (game_state) => {
 });
 
 function renderFrame(game_state) {
+  const curr_stage = game_state.stage;
+
   // Calculate Network Health
   const online_count = game_state.players.filter(p => p.is_online).length;
   online_stats.innerText = `Network: ${online_count}/6 Online`;
@@ -83,17 +97,63 @@ function renderFrame(game_state) {
 
   // Update Question Preview
   const stages = ["IDLE", "QUESTION ACTIVE", "REVEAL", "LEADERBOARD"];
-  preview_stage.innerText = `STAGE: ${stages[game_state.stage]}`;
+  preview_stage.innerText = `STAGE: ${stages[curr_stage]}`;
 
-  if (game_state.stage === 0) {
+  // Update buttons and preview fields based on the stage
+  if (curr_stage === 0) {
     preview_text.innerText = "Awaiting game start...";
-  } else if (game_state.stage === 2) {
-    preview_text.innerText = `${letters[game_state.correct_idx]}: ${game_state.options["pt"][game_state.correct_idx]}`;
-  } else if (game_state.stage === 3) {
+
+    btn_start.disabled = false;
+    btn_replay.disabled = true;
+    btn_reveal.disabled = true;
+    btn_results.disabled = true;
+    btn_trans_rev.disabled = true;
+    btn_trans_pause.disabled = true;
+    btn_trans_fwd.disabled = true;
+    btn_trans_speed.disabled = true;
+  } else if (curr_stage === 2) {
+    preview_text.innerText = `${LETTERS[game_state.correct_idx]}: ${game_state.options["pt"][game_state.correct_idx]}`;
+
+    btn_start.disabled = false;
+    btn_replay.disabled = false;
+    btn_reveal.disabled = true;
+    btn_results.disabled = false;
+    btn_trans_rev.disabled = false;
+    btn_trans_pause.disabled = false;
+    btn_trans_fwd.disabled = false;
+    btn_trans_speed.disabled = false;
+  } else if (curr_stage === 3) {
     preview_text.innerText = "Displaying Final Leaderboard";
+
+    btn_start.disabled = true;
+    btn_replay.disabled = true;
+    btn_reveal.disabled = true;
+    btn_results.disabled = true;
+    btn_trans_rev.disabled = true;
+    btn_trans_pause.disabled = true;
+    btn_trans_fwd.disabled = true;
+    btn_trans_speed.disabled = true;
   } else {
     preview_text.innerText = `Q${game_state.curr_question_idx + 1}: ${game_state.question_text["pt"]}`;
+
+    btn_start.disabled = true;
+    btn_replay.disabled = false;
+    btn_reveal.disabled = false;
+    btn_results.disabled = false;
+    btn_trans_rev.disabled = false;
+    btn_trans_pause.disabled = false;
+    btn_trans_fwd.disabled = false;
+    btn_trans_speed.disabled = false;
   }
+
+  // Transport buttons down/pressed updates
+  // Directions: 0 = Reverse, 1 = Pause, 2 = Forward
+  // Speed: SPEED_AMT array
+  const play_direction = game_state.trans_playdirection;
+  btn_trans_rev.classList.toggle("is-down", play_direction === 0);
+  btn_trans_pause.classList.toggle("is-down", play_direction === 1);
+  btn_trans_fwd.classList.toggle("is-down", play_direction === 2);
+  btn_trans_speed.innerHTML = `<span class="glow-text">${SPEED_AMT[game_state.trans_speed_idx]}</span>`;
 
   // Render the Player Matrix
   matrix_body.innerHTML = ""; // Clear old frame
@@ -124,12 +184,12 @@ function renderFrame(game_state) {
       td_sel.innerText = "-";
       td_sel.style.color = "#555";
     } else {
-      td_sel.innerText = `Option ${letters[player.selected_option]}`;
+      td_sel.innerText = `Option ${LETTERS[player.selected_option]}`;
     }
 
     // Col 5: Lock Status
     const td_lock = document.createElement("td");
-    if (game_state.stage === 1) {
+    if (curr_stage === 1) {
       if (player.is_confirmed) {
         td_lock.innerText = "LOCKED IN";
         td_lock.className = "status-locked";
