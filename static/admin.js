@@ -79,7 +79,7 @@ window.send_command = function(action_string) {
 
 // Helper array to convert 0,1,2,3 into A,B,C,D
 const LETTERS = ["A", "B", "C", "D", "E", "F"];
-const SPEED_AMT = ["1.0x", "0.5x", "0.25x"];
+const SPEED_AMT = ["1.0x", "0.5x", "0.25x", "2.0x"];
 
 // Render
 socket.on("state_update", (game_state) => {

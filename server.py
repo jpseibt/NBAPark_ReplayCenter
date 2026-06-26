@@ -49,8 +49,9 @@ class PlayDirectionCmd(IntEnum):
   PAUSE = 1
   FORWARD = 2
 
-# After the Resolume transport float conversion, cycle: [1x, 0.5x, 0.25x]
-speed_cycle = [0.251188, 0.165715, 0.109336]
+# After the Resolume transport speed multiplier float conversion, cycle: [1x, 0.5x, 0.25x, 2x]
+# x = multiplier: (x / 10) ^ 0.6
+speed_cycle = [0.251188, 0.165715, 0.109336, 0.380730]
 
 
 #==================================================
@@ -506,6 +507,14 @@ def process_cmd_transport_playdirection(cmd):
   # STATE GUARD: Only do transport action if not on IDLE or LEADERBOARD
   if game_state["stage"] == GameStage.IDLE.value or game_state["stage"] == GameStage.LEADERBOARD.value:
     return
+
+  # Ignore transport commands that are already active or toggle pause button
+  if game_state["trans_playdirection"] == cmd:
+    if cmd == PlayDirectionCmd.PAUSE.value:
+      cmd = PlayDirectionCmd.FORWARD.value
+    else:
+      curr_audio_cmd = 0
+      return
 
   game_state["trans_playdirection"] = cmd
   send_resolume_transport_playdirection(cmd)
