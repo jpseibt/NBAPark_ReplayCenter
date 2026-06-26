@@ -101,6 +101,9 @@ socket.on("audio_command", (cmd) => {
 });
 
 // DOM Elements
+const btn_en_lang = document.getElementById("en-lang-btn");
+const btn_pt_lang = document.getElementById("pt-lang-btn");
+const btn_es_lang = document.getElementById("es-lang-btn");
 const question_text = document.getElementById("question-text");
 const options_container = document.getElementById("options-container");
 const action_container = document.getElementById("action-container");
@@ -118,6 +121,11 @@ function renderFrame(game_state) {
   // Clear the screen for redrawing
   options_container.innerHTML = "";
   action_container.innerHTML = "";
+
+  // Language buttons state
+  btn_en_lang.classList.toggle("is-down", local_lang === "en");
+  btn_pt_lang.classList.toggle("is-down", local_lang === "pt");
+  btn_es_lang.classList.toggle("is-down", local_lang === "es");
 
   // --- STATE: IDLE ---
   if (game_state.stage === 0) {

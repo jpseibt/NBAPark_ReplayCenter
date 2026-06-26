@@ -11,7 +11,7 @@
       "es": ["Tiro de 3 puntos", "Tiro de 2 puntos"],
       "pt": ["Arremesso de 3 pontos", "Arremesso de 2 pontos"]
     },
-    "correct_idx": 1
+    "correct_idx": 0
   },
   {
     "id": 1,
@@ -39,7 +39,7 @@
       "es": ["Posesión de L.A Lakers (uniforme amarillo)", "Posesión de Atlanta Hawks (uniforme rojo)"],
       "pt": ["Posse do L.A Lakers (uniforme amarelo)", "Posse do Atlanta Hawks (uniforme vermelho)"]
     },
-    "correct_idx": 1
+    "correct_idx": 0
   },
   {
     "id": 3,
@@ -53,6 +53,6 @@
       "es": ["3 puntos más para Brooklyn Nets", "Tiempo expirado, no valen los puntos"],
       "pt": ["Mais 3 pontos para Brooklyn Nets", "Tempo expirado, não valem os pontos"]
     },
-    "correct_idx": 1
+    "correct_idx": 0
   }
 ]
