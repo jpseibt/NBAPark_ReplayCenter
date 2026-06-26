@@ -35,9 +35,9 @@
       "pt": "Se você fosse o árbitro do NBA Replay Center, esta jogada seria:"
     },
     "options": {
-      "en": ["Possession for L.A Lakers (yellow uniform)", "Possession for Atlanta Hawks (red uniform)"],
-      "es": ["Posesión de L.A Lakers (uniforme amarillo)", "Posesión de Atlanta Hawks (uniforme rojo)"],
-      "pt": ["Posse do L.A Lakers (uniforme amarelo)", "Posse do Atlanta Hawks (uniforme vermelho)"]
+      "en": ["Possession for L.A Lakers (purple uniform)", "Possession for Atlanta Hawks (white uniform)"],
+      "es": ["Posesión de L.A Lakers (uniforme morado)", "Posesión de Atlanta Hawks (uniforme blanco)"],
+      "pt": ["Posse do L.A Lakers (uniforme roxo)", "Posse do Atlanta Hawks (uniforme branco)"]
     },
     "correct_idx": 0
   },
