@@ -194,6 +194,7 @@
 /* Control Buttons Layout */
 .operator-controls {
   display: flex;
+  align-items: flex-start;
   justify-content: space-between;
   margin-bottom: 20px;
 }
@@ -235,6 +236,33 @@
 .controls-transport {
   display: flex;
   gap: 10px;
+}
+
+/* TV Routing Grid */
+.controls-routing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.tv-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.btn-op-video {
+  --accent-color: #00aaff;
+  width: 70px;
+  height: 60px;
+}
+
+.btn-op-video-all {
+  --accent-color: #00aaff;
+  width: 100%;
+  font-size: 16px;
+  padding: 5px;
 }
 
 .controls-system {

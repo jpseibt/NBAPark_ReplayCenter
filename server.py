@@ -66,6 +66,7 @@ game_state = {
   "correct_idx": -1,             # -1 when hidden, updated on REVEAL
   "trans_playdirection": PlayDirectionCmd.FORWARD.value,
   "trans_speed_idx": 0,
+  "selected_videos": [1, 2, 3, 4], # Each play have 4 camera angles, separated by layers in Resolume Arena. The transport buttons should target only the selected videos
   "players": INITIAL_PLAYERS
 }
 
@@ -123,9 +124,9 @@ def send_resolume_transport_playdirection(cmd):
 
   col_value = resolume_first_question_col + offset
 
-  # Send the transport play direction command to the 4 clips.
+  # Send the transport play direction command to the selected videos.
   # (each play have 4 different camera angles in their own layer)
-  for layer_num in range(1, 5):
+  for layer_num in game_state["selected_videos"]:
     osc_address = f"/composition/layers/{layer_num}/clips/{col_value}/transport/position/behaviour/playdirection"
 
     try:
@@ -146,9 +147,9 @@ def send_resolume_transport_speed(amt):
 
   col_value = resolume_first_question_col + offset
 
-  # Send the transport play direction command to the 4 clips.
+  # Send the transport play direction command to the selected videos.
   # (each play have 4 different camera angles in their own layer)
-  for layer_num in range(1, 5):
+  for layer_num in game_state["selected_videos"]:
     osc_address = f"/composition/layers/{layer_num}/clips/{col_value}/transport/position/behaviour/speed"
 
     try:
@@ -411,6 +412,16 @@ async def on_admin_command(sid, data):
     process_cmd_transport_playdirection(PlayDirectionCmd.FORWARD.value)
   elif action == "T_SLOW_TOGGLE":
     process_cmd_transport_speed_toggle()
+  elif action == "TOGGLE_VIDEO_1":
+    process_cmd_toggle_layer(1)
+  elif action == "TOGGLE_VIDEO_2":
+    process_cmd_toggle_layer(2)
+  elif action == "TOGGLE_VIDEO_3":
+    process_cmd_toggle_layer(3)
+  elif action == "TOGGLE_VIDEO_4":
+    process_cmd_toggle_layer(4)
+  elif action == "SELECT_ALL_VIDEOS":
+    process_cmd_select_all_layers()
   elif action == "RESULTS":
     process_cmd_results()
   elif action == "RESET":
@@ -474,10 +485,11 @@ def process_cmd_replay():
   global curr_audio_cmd
   curr_audio_cmd = 1
 
-  send_resolume_transport_playdirection(PlayDirectionCmd.FORWARD.value)
-  send_resolume_transport_speed(speed_cycle[0])
   game_state["trans_playdirection"] = PlayDirectionCmd.FORWARD.value
   game_state["trans_speed_idx"] = 0
+  game_state["selected_videos"] = [1, 2, 3, 4]
+  send_resolume_transport_playdirection(PlayDirectionCmd.FORWARD.value)
+  send_resolume_transport_speed(speed_cycle[0])
   trigger_resolume_column()
 
 
@@ -533,6 +545,41 @@ def process_cmd_transport_speed_toggle():
   send_resolume_transport_speed(speed_cycle[new_speed_idx])
 
 
+def process_cmd_toggle_layer(layer_num):
+  global curr_audio_cmd
+  curr_audio_cmd = 2
+
+  # STATE GUARD: Only do transport action if not on IDLE or LEADERBOARD
+  if game_state["stage"] == GameStage.IDLE.value or game_state["stage"] == GameStage.LEADERBOARD.value:
+    return
+
+  if game_state["trans_playdirection"] != PlayDirectionCmd.PAUSE.value:
+    send_resolume_transport_playdirection(PlayDirectionCmd.PAUSE.value)
+    game_state["trans_playdirection"] = PlayDirectionCmd.PAUSE.value
+
+  if layer_num in game_state["selected_videos"]:
+    game_state["selected_videos"].remove(layer_num)
+  else:
+    game_state["selected_videos"].append(layer_num)
+    send_resolume_transport_speed(speed_cycle[game_state["trans_speed_idx"]])
+
+
+def process_cmd_select_all_layers():
+  global curr_audio_cmd
+  curr_audio_cmd = 2
+
+  # STATE GUARD: Only do transport action if not on IDLE or LEADERBOARD
+  if game_state["stage"] == GameStage.IDLE.value or game_state["stage"] == GameStage.LEADERBOARD.value:
+    return
+
+  if game_state["trans_playdirection"] != PlayDirectionCmd.PAUSE.value:
+    send_resolume_transport_playdirection(PlayDirectionCmd.PAUSE.value)
+    game_state["trans_playdirection"] = PlayDirectionCmd.PAUSE.value
+
+  game_state["selected_videos"] = [1, 2, 3, 4]
+  send_resolume_transport_speed(speed_cycle[game_state["trans_speed_idx"]])
+
+
 def process_cmd_reset():
   global curr_audio_cmd
   curr_audio_cmd = 2
@@ -544,6 +591,7 @@ def process_cmd_reset():
   game_state["correct_idx"] = -1
   game_state["trans_playdirection"] = PlayDirectionCmd.FORWARD.value
   game_state["trans_speed_idx"] = 0
+  game_state["selected_videos"] = [1, 2, 3, 4]
 
   for player in game_state["players"]:
     player["is_playing"] = False

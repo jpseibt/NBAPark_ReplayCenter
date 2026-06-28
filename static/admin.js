@@ -18,6 +18,11 @@ const btn_trans_rev = document.getElementById("btn-trans-rev");
 const btn_trans_pause= document.getElementById("btn-trans-pause");
 const btn_trans_fwd = document.getElementById("btn-trans-fwd");
 const btn_trans_speed = document.getElementById("btn-trans-speed");
+const btn_video_1 = document.getElementById("btn-video-1");
+const btn_video_2 = document.getElementById("btn-video-2");
+const btn_video_3 = document.getElementById("btn-video-3");
+const btn_video_4 = document.getElementById("btn-video-4");
+const btn_video_all = document.getElementById("btn-video-all");
 
 const preview_stage = document.getElementById("preview-stage");
 const preview_text = document.getElementById("preview-text");
@@ -95,67 +100,66 @@ function renderFrame(game_state) {
   online_stats.innerText = `Network: ${online_count}/6 Online`;
   online_stats.style.color = online_count === 6 ? "green" : "orange";
 
-  // Update Question Preview
-  const stages = ["IDLE", "QUESTION ACTIVE", "REVEAL", "LEADERBOARD"];
-  preview_stage.innerText = `STAGE: ${stages[curr_stage]}`;
-
+  //------------------------------
   // Update buttons and preview fields based on the stage
-  if (curr_stage === 0) {
-    preview_text.innerText = "Awaiting game start...";
+  //
+  const selected_videos = game_state.selected_videos || [1, 2, 3, 4];
+  const video_select_buttons_disabled = (curr_stage === 0 || curr_stage === 3)
+  const trans_buttons_disabled = (curr_stage === 0 || curr_stage === 3 || selected_videos.length < 1);
+  const play_direction = game_state.trans_playdirection;
 
-    btn_start.disabled = false;
-    btn_replay.disabled = true;
-    btn_reveal.disabled = true;
-    btn_results.disabled = true;
-    btn_trans_rev.disabled = true;
-    btn_trans_pause.disabled = true;
-    btn_trans_fwd.disabled = true;
-    btn_trans_speed.disabled = true;
-  } else if (curr_stage === 2) {
-    preview_text.innerText = `${LETTERS[game_state.correct_idx]}: ${game_state.options["pt"][game_state.correct_idx]}`;
+  // START, REPLAY, REVEAL, RESULST, and RESET buttons
+  btn_start.disabled = (curr_stage === 1 || curr_stage === 3);
+  btn_replay.disabled = (curr_stage === 0 || curr_stage === 3);
+  btn_reveal.disabled = (curr_stage !== 1);
+  btn_results.disabled = (curr_stage === 0 || curr_stage === 3);
+  btn_reset.disabled = false;
 
-    btn_start.disabled = false;
-    btn_replay.disabled = false;
-    btn_reveal.disabled = true;
-    btn_results.disabled = false;
-    btn_trans_rev.disabled = false;
-    btn_trans_pause.disabled = false;
-    btn_trans_fwd.disabled = false;
-    btn_trans_speed.disabled = false;
-  } else if (curr_stage === 3) {
-    preview_text.innerText = "Displaying Final Leaderboard";
-
-    btn_start.disabled = true;
-    btn_replay.disabled = true;
-    btn_reveal.disabled = true;
-    btn_results.disabled = true;
-    btn_trans_rev.disabled = true;
-    btn_trans_pause.disabled = true;
-    btn_trans_fwd.disabled = true;
-    btn_trans_speed.disabled = true;
-  } else {
-    preview_text.innerText = `Q${game_state.curr_question_idx + 1}: ${game_state.question_text["pt"]}`;
-
-    btn_start.disabled = true;
-    btn_replay.disabled = false;
-    btn_reveal.disabled = false;
-    btn_results.disabled = false;
-    btn_trans_rev.disabled = false;
-    btn_trans_pause.disabled = false;
-    btn_trans_fwd.disabled = false;
-    btn_trans_speed.disabled = false;
-  }
+  // Video transport buttons
+  btn_trans_rev.disabled = trans_buttons_disabled;
+  btn_trans_pause.disabled = trans_buttons_disabled;
+  btn_trans_fwd.disabled = trans_buttons_disabled;
+  btn_trans_speed.disabled = trans_buttons_disabled;
 
   // Transport buttons down/pressed updates
   // Directions: 0 = Reverse, 1 = Pause, 2 = Forward
   // Speed: SPEED_AMT array
-  const play_direction = game_state.trans_playdirection;
   btn_trans_rev.classList.toggle("is-down", play_direction === 0);
   btn_trans_pause.classList.toggle("is-down", play_direction === 1);
   btn_trans_fwd.classList.toggle("is-down", play_direction === 2);
   btn_trans_speed.innerHTML = `<span class="glow-text">${SPEED_AMT[game_state.trans_speed_idx]}</span>`;
 
+  // Video select buttons
+  btn_video_1.disabled = video_select_buttons_disabled;
+  btn_video_2.disabled = video_select_buttons_disabled;
+  btn_video_3.disabled = video_select_buttons_disabled;
+  btn_video_4.disabled = video_select_buttons_disabled;
+  btn_video_all.disabled = video_select_buttons_disabled;
+  btn_video_1.classList.toggle("is-down", selected_videos.includes(1));
+  btn_video_2.classList.toggle("is-down", selected_videos.includes(2));
+  btn_video_3.classList.toggle("is-down", selected_videos.includes(3));
+  btn_video_4.classList.toggle("is-down", selected_videos.includes(4));
+
+  //------------------------------
+  // Update preview fields based on the stage
+  //
+  // Update Question Preview
+  const stages = ["IDLE", "QUESTION ACTIVE", "REVEAL", "LEADERBOARD"];
+  preview_stage.innerText = `STAGE: ${stages[curr_stage]}`;
+
+  if (curr_stage === 0) {
+    preview_text.innerText = "Awaiting game start...";
+  } else if (curr_stage === 2) {
+    preview_text.innerText = `${LETTERS[game_state.correct_idx]}: ${game_state.options["pt"][game_state.correct_idx]}`;
+  } else if (curr_stage === 3) {
+    preview_text.innerText = "Displaying Final Leaderboard";
+  } else {
+    preview_text.innerText = `Q${game_state.curr_question_idx + 1}: ${game_state.question_text["pt"]}`;
+  }
+
+  //------------------------------
   // Render the Player Matrix
+  //
   matrix_body.innerHTML = ""; // Clear old frame
 
   game_state.players.forEach(player => {
