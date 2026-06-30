@@ -253,9 +253,13 @@
 }
 
 .btn-op-video {
-  --accent-color: #00aaff;
+  --accent-color: #666666;
   width: 70px;
   height: 60px;
+}
+
+.btn-op-video.is-down {
+  --accent-color: #00aaff;
 }
 
 .btn-op-video-all {
