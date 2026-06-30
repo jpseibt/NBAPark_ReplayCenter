@@ -63,7 +63,13 @@ socket.on("disconnect", () => {
 // Command Emitter
 window.send_command = function(action_string) {
   // Show dialog to confirm destructive commands
-  if (action_string === "RESULTS" && latest_game_state.stage !== 3) {
+  if (action_string === "REVEAL") {
+    pending_command = action_string;
+    dialog_message.innerText = "Finish the current question and reveal the answer?\nMake sure every player have confirmed their answers.";
+    confirm_dialog.showModal();
+    return;
+  }
+  else if (action_string === "RESULTS" && latest_game_state.stage !== 3) {
     if (latest_game_state.stage != 0) {
       pending_command = action_string;
       dialog_message.innerText = "End the game and show the final leaderboard?";
