@@ -1,4 +1,5 @@
 from enum import IntEnum
+from datetime import datetime
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
@@ -10,6 +11,12 @@ import random
 import socketio
 import uvicorn
 
+
+def log(tag, message):
+  timestamp = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
+  print(f"{timestamp} | [{tag}] {message}")
+
+
 #==================================================
 # PRIVATE MEMORY (Server Authority Only)
 #==================================================
@@ -17,9 +24,9 @@ import uvicorn
 try:
   with open("questions.json", "r", encoding="utf-8") as f:
     QUESTION_DB = json.load(f)
-    print(f"[SYSTEM] Loaded {len(QUESTION_DB)} questions into memory.")
+    log("SYSTEM", f"Loaded {len(QUESTION_DB)} questions into memory.")
 except FileNotFoundError:
-  print(f"[SYSTEM] ERROR - questions.json not found. Exiting...")
+  log("SYSTEM", "ERROR - questions.json not found. Exiting...")
   exit(1)
 
 class GameStage(IntEnum):
@@ -77,9 +84,9 @@ game_state = {
 # Resolume Arena runs locally on the server PC
 try:
   resolume_client = SimpleUDPClient("127.0.0.1", 7000)
-  print("[SYSTEM] OSC UDP Client allocated targeting Resolume on 127.0.0.1:7000")
+  log("SYSTEM", "OSC UDP Client allocated targeting Resolume on 127.0.0.1:7000")
 except Exception as e:
-  print(f"[ERROR] Failed to allocate OSC client: {e}")
+  log("ERROR", f"Failed to allocate OSC client: {e}")
 
 # An OSC message will be sent to Resolume Arena to activate a specific column, being one
 # for the waiting screen, one for each question, and one at the end of the session showing
@@ -108,9 +115,9 @@ def trigger_resolume_column():
 
   try:
     resolume_client.send_message(osc_address, 1)
-    print(f"[OSC] Send int 1 to: \"{osc_address}\"")
+    log("OSC", f"Send int 1 to: \"{osc_address}\"")
   except Exception as e:
-    print(f"[OSC] Error: Failed to send UDP packet \"{osc_address}\" | {e}")
+    log("OSC", f"Error: Failed to send UDP packet \"{osc_address}\" | {e}")
 
 
 def send_resolume_transport_playdirection(cmd):
@@ -131,9 +138,9 @@ def send_resolume_transport_playdirection(cmd):
 
     try:
       resolume_client.send_message(osc_address, cmd)
-      print(f"[OSC] Send int {cmd} to: \"{osc_address}\"")
+      log("OSC", f"Send int {cmd} to: \"{osc_address}\"")
     except Exception as e:
-      print(f"[OSC] Error: Failed to send UDP packet \"{osc_address}\" | {e}")
+      log("OSC", f"Error: Failed to send UDP packet \"{osc_address}\" | {e}")
 
 
 def send_resolume_transport_speed(amt):
@@ -154,9 +161,9 @@ def send_resolume_transport_speed(amt):
 
     try:
       resolume_client.send_message(osc_address, amt)
-      print(f"[OSC] Send float {amt} to: \"{osc_address}\"")
+      log("OSC", f"Send float {amt} to: \"{osc_address}\"")
     except Exception as e:
-      print(f"[OSC] Error: Failed to send UDP packet \"{osc_address}\" | {e}")
+      log("OSC", f"Error: Failed to send UDP packet \"{osc_address}\" | {e}")
 
 
 
@@ -251,20 +258,20 @@ async def on_connect(sid, environ, auth):
   # The admin will send: {"client_id": "admin"}
 
   if not auth or "client_id" not in auth:
-    print(f"[{sid}] Connection Rejected: No client_id provided.")
+    log(f"{sid}", "Connection Rejected: No client_id provided.")
     return False  # Returning False immediately terminates the socket
 
   client_id = auth["client_id"]
 
   # Handle Admin/Debug Controller connecting
   if client_id == "admin":
-    print(f"[{sid}] Admin Controller Connected.")
+    log(f"{sid}:{client_id}", "Admin Controller Connected.")
     admin_sids.add(sid);
     await sio.emit("state_update", game_state, to=sid)
     return True
 
   if client_id == "debug":
-    print(f"[{sid}] Debug Controller Connected.")
+    log(f"{sid}:{client_id}", "Debug Controller Connected.")
     admin_sids.add(sid);
     debug_sids.add(sid);
     await sio.emit("state_update", game_state, to=sid)
@@ -273,7 +280,7 @@ async def on_connect(sid, environ, auth):
 
   # Handle the Leaderboard Screen connecting
   if client_id == "leaderboard":
-    print(f"[{sid}] Leaderboard Screen Connected.")
+    log(f"{sid}:{client_id}", "Leaderboard Screen Connected.")
     await sio.emit("state_update", game_state, to=sid)
     return True
 
@@ -285,7 +292,7 @@ async def on_connect(sid, environ, auth):
       player_idx = i
       break
   if player_idx == -1:
-    print(f"[{sid}] Connection Rejected: Unknown ID '{client_id}'.")
+    log(f"{sid}", f"Connection Rejected: Unknown ID '{client_id}'.")
     return False
 
   # Map the socket to the memory slot
@@ -293,7 +300,7 @@ async def on_connect(sid, environ, auth):
 
   # Mutate the world state
   game_state["players"][player_idx]["is_online"] = True
-  print(f"[{sid}] {client_id} Online. Mapped to idx {player_idx}.")
+  log(f"{sid}:{client_id}", f"Player Connected. Mapped to idx {player_idx}.")
 
   # Broadcast the new world state
   await sio.emit("state_update", game_state)
@@ -308,7 +315,7 @@ async def on_disconnect(sid):
 
     # Mutate the world state
     game_state["players"][player_idx]["is_online"] = False
-    print(f"[{sid}] {game_state['players'][player_idx]['id']} Offline.")
+    log(f"{sid}", f"{game_state['players'][player_idx]['id']} Offline.")
 
     # Free the memory in our pointer table to prevent a memory leak
     del sid_to_player_idx[sid]
@@ -319,9 +326,9 @@ async def on_disconnect(sid):
     admin_sids.remove(sid)
     if sid in debug_sids:
       debug_sids.remove(sid)
+    log(f"{sid}:admin", "Admin/Debug Controller Disconnected.")
   else:
-    # If it wasn't in our dictionary, it was either the Admin or a rejected connection
-    print(f"[{sid}] Disconnected (Unmapped).")
+    log(f"{sid}", "Disconnected (Unmapped).")
 
 
 @sio.on("select_option")
@@ -334,21 +341,21 @@ async def on_select_option(sid, option_idx):
 
   # Guard checks
   if game_state["stage"] != GameStage.QUESTION_ACTIVE.value:
-    print(f"Ignored player {player['id']} selection: No question active.")
+    log(f"{sid}:{player['id']}", "Ignored player selection: No question active.")
     return
 
   if player["is_confirmed"]:
-    print(f"Ignored player {player['id']} selection: Player already confirmed his answer.")
+    log(f"{sid}:{player['id']}", "Ignored player selection: Player already confirmed his answer.")
     return
 
   if not (0 <= option_idx < len(game_state["options"])):
-    print(f"Ignored player {player['id']} selection: Invalid question index.")
+    log(f"{sid}:{player['id']}", "Ignored player selection: Invalid question index.")
     return
 
   # Mutate State & Broadcast
   player["is_playing"] = True
   player["selected_option"] = option_idx
-  print(f"[{player['id']}] Selected option {option_idx}")
+  log(f"{sid}:{player['id']}", f"Selected option {option_idx}.")
   await sio.emit("state_update", game_state)
 
 
@@ -362,20 +369,20 @@ async def on_confirm_option(sid):
 
   # Guard checks
   if game_state["stage"] != GameStage.QUESTION_ACTIVE.value:
-    print(f"Ignored player {player['id']} confirmation: No question active.")
+    log(f"{sid}:{player['id']}", "Ignored player confirmation: No question active.")
     return
 
   if player["is_confirmed"]:
-    print(f"Ignored player {player['id']} confirmation: Player already confirmed his answer.")
+    log(f"{sid}:{player['id']}", "Ignored player confirmation: Player already confirmed his answer.")
     return
 
   if player["selected_option"] == -1:
-    print(f"Ignored player {player['id']} confirmation: No option selected.")
+    log(f"{sid}:{player['id']}", "Ignored player confirmation: No option selected.")
     return
 
   # Mutate State & Broadcast
   player["is_confirmed"] = True
-  print(f"[{player['id']}] LOCKED IN option {player['selected_option']}")
+  log(f"{sid}:{player['id']}", f"LOCKED IN option {player['selected_option']}.")
   await sio.emit("state_update", game_state)
 
 #------------------------------
@@ -391,7 +398,7 @@ curr_audio_cmd = 0
 async def on_admin_command(sid, data):
   # Hardware-Level Authentication
   if sid not in admin_sids:
-    print(f"[{sid}] REJECTED: Unauthorized admin command.")
+    log(f"{sid}", "REJECTED: Unauthorized admin command.")
     return
 
   # Extract Action
@@ -429,7 +436,7 @@ async def on_admin_command(sid, data):
     for d_sid in debug_sids:
       await sio.emit("private_state_update", QUESTION_DB, to=d_sid)
   else:
-    print(f"Unknown admin action: {action}")
+    log("ADMIN", f"Unknown admin action: {action}")
     return
 
   # Broadcast the world state to all connected clients
@@ -437,7 +444,7 @@ async def on_admin_command(sid, data):
 
   if curr_audio_cmd > 0:
     await sio.emit("audio_command", curr_audio_cmd)
-    print(f"[Audio] Send command: {curr_audio_cmd}")
+    log("Audio", f"Send command: {curr_audio_cmd}")
 
 
 #==================================================
@@ -449,7 +456,7 @@ def process_cmd_start():
 
   # STATE GUARD: Only advance if in IDLE or REVEAL state
   if game_state["stage"] == GameStage.QUESTION_ACTIVE.value:
-    print("Ignored START_QUESTION: A question is already active.")
+    log("ADMIN", "Ignored START_QUESTION: A question is already active.")
     curr_audio_cmd = 0
     return
 
@@ -477,7 +484,7 @@ def process_cmd_start():
     player["selected_option"] = -1
     player["is_confirmed"] = False
 
-  print(f"--- QUESTION {game_state['curr_question_idx']} (ID: {game_state['question_db_id']}) STARTED ---")
+  log("GAME", f"--- QUESTION {game_state['curr_question_idx']} (ID: {game_state['question_db_id']}) STARTED ---")
   process_cmd_replay()
 
 
@@ -509,7 +516,7 @@ def process_cmd_reveal():
     if player["is_confirmed"] and player["selected_option"] == correct_answer_idx:
       player["score"] += 1
 
-  print(f"--- REVEALED QUESTION {game_state['curr_question_idx']} ---")
+  log("GAME", f"--- REVEALED QUESTION {game_state['curr_question_idx']} ---")
 
 
 def process_cmd_transport_playdirection(cmd):
@@ -602,7 +609,7 @@ def process_cmd_reset():
   # Randomize questions order
   random.shuffle(QUESTION_DB)
 
-  print("--- GAME RESET (QUESTIONS SHUFFLED) ---")
+  log("GAME", "--- RESET (QUESTIONS SHUFFLED) ---")
   trigger_resolume_column()
 
 
@@ -613,7 +620,7 @@ def process_cmd_results():
   # Forces the game to end and displays the leaderboard
   game_state["stage"] = GameStage.LEADERBOARD.value
   game_state["curr_question_idx"] = len(QUESTION_DB)
-  print("--- FORCED LEADERBOARD ---")
+  log("GAME", "--- LEADERBOARD (GAME OVER) ---")
   trigger_resolume_column()
 
 # --- ENTRY POINT ---
