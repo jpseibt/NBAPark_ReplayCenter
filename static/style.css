@@ -389,8 +389,15 @@
   text-align: center;
 }
 
+#play-info {
+  margin-top: 30px;
+  font-size: 24px;
+  font-style: italic;
+  letter-spacing: 1px;
+}
+
 #question-text {
-  margin: 64px 20px 30px;
+  margin: 30px 20px 0px;
   font-size: 38px;
 
   max-width: 720px;

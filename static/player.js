@@ -3,6 +3,7 @@ let local_lang = "pt";
 const UI_STRINGS = {
   "en": {
     "waiting": "Waiting for Admin to start the game...",
+    "question": "If you were the NBA Replay Center referee, this play would be:",
     "confirm": "CONFIRM ANSWER",
     "locked": "Answer Locked! Waiting for others...",
     "correct": "CORRECT!",
@@ -13,6 +14,7 @@ const UI_STRINGS = {
   },
   "pt": {
     "waiting": "Aguardando o Administrador iniciar o jogo...",
+    "question": "Se você fosse o árbitro do NBA Replay Center, esta jogada seria:",
     "confirm": "CONFIRMAR RESPOSTA",
     "locked": "Resposta Confirmada! Aguardando os outros...",
     "correct": "CORRETO!",
@@ -23,6 +25,7 @@ const UI_STRINGS = {
   },
   "es": {
     "waiting": "Esperando a que el Administrador inicie el juego...",
+    "question": "Si fueras el árbitro del NBA Replay Center, esta jugada sería:",
     "confirm": "CONFIRMAR RESPUESTA",
     "locked": "¡Respuesta confirmada! Esperando a los demás...",
     "correct": "¡CORRECTO!",
@@ -104,6 +107,7 @@ socket.on("audio_command", (cmd) => {
 const btn_en_lang = document.getElementById("en-lang-btn");
 const btn_pt_lang = document.getElementById("pt-lang-btn");
 const btn_es_lang = document.getElementById("es-lang-btn");
+const play_info = document.getElementById("play-info");
 const question_text = document.getElementById("question-text");
 const options_container = document.getElementById("options-container");
 const action_container = document.getElementById("action-container");
@@ -129,6 +133,7 @@ function renderFrame(game_state) {
 
   // --- STATE: IDLE ---
   if (game_state.stage === 0) {
+    play_info.innerText = "";
     question_text.innerText = UI_STRINGS[local_lang].waiting;
     last_question_db_id = -1;
     return;
@@ -136,7 +141,8 @@ function renderFrame(game_state) {
 
   // --- STATE: QUESTION ACTIVE ---
   if (game_state.stage === 1) {
-    question_text.innerText = game_state.question_text[local_lang];
+    play_info.innerText = game_state.info;
+    question_text.innerText = UI_STRINGS[local_lang].question;
 
     // Set audio track
     if (game_state.question_db_id !== last_question_db_id) {
@@ -183,9 +189,10 @@ function renderFrame(game_state) {
 
   // --- STATE: REVEAL ---
   if (game_state.stage === 2) {
-    question_text.innerText = game_state.question_text[local_lang];
+    play_info.innerText = game_state.info;
+    question_text.innerText = UI_STRINGS[local_lang].question;
 
-    const answered_right = my_player.is_confirmed && (my_player.selected_option === game_state.correct_idx);
+    const answered_right = my_player.is_confirmed && (my_player.selected_option === game_state.correct_option_idx);
 
     game_state.options[local_lang].forEach((option_string, index) => {
       const btn = document.createElement("button");
@@ -193,7 +200,7 @@ function renderFrame(game_state) {
       btn.innerText = option_string;
       btn.disabled = true;
 
-      if (index === game_state.correct_idx) {
+      if (index === game_state.correct_option_idx) {
         btn.classList.add("btn-correct");
       }
       else if (index === my_player.selected_option && !answered_right) {
@@ -223,6 +230,7 @@ function renderFrame(game_state) {
 
   // --- STATE: LEADERBOARD ---
   if (game_state.stage === 3) {
+    play_info.innerText = "";
     question_text.innerText = UI_STRINGS[local_lang].game_over;
 
     const final_text = document.createElement("div");

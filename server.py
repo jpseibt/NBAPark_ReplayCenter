@@ -68,9 +68,9 @@ game_state = {
   "stage": GameStage.IDLE.value, # Store the raw integer
   "curr_question_idx": -1,       # Traversal index (0, 1, 2, ...)
   "question_db_id": -1,          # Maps to QUESTION_DB ID
-  "question_text": "",           # The string the tablets will render
+  "info": "",                    # String containing information about the play (teams, date, player, play outcome)
   "options": [],                 # The array of strings for the buttons
-  "correct_idx": -1,             # -1 when hidden, updated on REVEAL
+  "correct_option_idx": -1,      # -1 when hidden, updated on REVEAL
   "trans_playdirection": PlayDirectionCmd.FORWARD.value,
   "trans_speed_idx": 0,
   "selected_videos": [1, 2, 3, 4], # Each play have 4 camera angles, separated by layers in Resolume Arena. The transport buttons should target only the selected videos
@@ -174,7 +174,10 @@ def send_resolume_transport_speed(amt):
 # async_mode='asgi' tells Socket.IO to integrate with Python's native async event loop.
 # cors_allowed_origins='*' is for local network hardware. It bypasses the browser's security
 # mechanism that normally prevents a web page from opening a socket to a different IP.
-sio = socketio.AsyncServer(async_mode="asgi", cors_allowed_origins='*')
+sio = socketio.AsyncServer(async_mode="asgi",
+                           cors_allowed_origins='*',
+                           ping_timeout=20,
+                           ping_interval=10)
 
 # Allocate the HTTP Server:
 # This is the basic router. Serves the static HTML/JS files to the tablets when they first
@@ -315,7 +318,7 @@ async def on_disconnect(sid):
 
     # Mutate the world state
     game_state["players"][player_idx]["is_online"] = False
-    log(f"{sid}", f"{game_state['players'][player_idx]['id']} Offline.")
+    log(f"{sid}:{game_state['players'][player_idx]['id']}", "Player Disconnected.")
 
     # Free the memory in our pointer table to prevent a memory leak
     del sid_to_player_idx[sid]
@@ -475,9 +478,10 @@ def process_cmd_start():
   # Copy text and options into public state
   active_question = QUESTION_DB[next_question_idx]
   game_state["question_db_id"] = active_question["id"]
-  game_state["question_text"] = active_question["text"]
+  # Extract information until '|' separator -> "info": "NYK @ SAS 2026/06/13 (Devin Vassel) | Basket confirmed good"
+  game_state["info"] = active_question["info"].partition('|')[0].rstrip();
   game_state["options"] = active_question["options"]
-  game_state["correct_idx"] = -1
+  game_state["correct_option_idx"] = -1
 
   # Reset players memory for new round
   for player in game_state["players"]:
@@ -509,8 +513,9 @@ def process_cmd_reveal():
     return
 
   game_state["stage"] = GameStage.REVEAL.value
-  correct_answer_idx = QUESTION_DB[game_state["curr_question_idx"]]["correct_idx"]
-  game_state["correct_idx"] = correct_answer_idx
+  game_state["info"] = QUESTION_DB[game_state["curr_question_idx"]]["info"];
+  correct_answer_idx = QUESTION_DB[game_state["curr_question_idx"]]["correct_option_idx"]
+  game_state["correct_option_idx"] = correct_answer_idx
 
   for player in game_state["players"]:
     if player["is_confirmed"] and player["selected_option"] == correct_answer_idx:
@@ -595,7 +600,9 @@ def process_cmd_reset():
   game_state["stage"] = GameStage.IDLE.value
   game_state["curr_question_idx"] = -1
   game_state["question_db_id"] = -1
-  game_state["correct_idx"] = -1
+  game_state["info"] = ""
+  game_state["options"] = []
+  game_state["correct_option_idx"] = -1
   game_state["trans_playdirection"] = PlayDirectionCmd.FORWARD.value
   game_state["trans_speed_idx"] = 0
   game_state["selected_videos"] = [1, 2, 3, 4]

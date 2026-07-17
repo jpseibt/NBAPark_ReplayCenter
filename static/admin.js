@@ -151,16 +151,20 @@ function renderFrame(game_state) {
   //
   // Update Question Preview
   const stages = ["IDLE", "QUESTION ACTIVE", "REVEAL", "LEADERBOARD"];
+  const question_info_str = ` | #${game_state.curr_question_idx + 1} id.${game_state.question_db_id} | ${game_state.info}`;
   preview_stage.innerText = `STAGE: ${stages[curr_stage]}`;
 
   if (curr_stage === 0) {
     preview_text.innerText = "Awaiting game start...";
   } else if (curr_stage === 2) {
-    preview_text.innerText = `${LETTERS[game_state.correct_idx]}: ${game_state.options["pt"][game_state.correct_idx]}`;
+    preview_stage.innerText += question_info_str;
+    preview_text.innerText = `${LETTERS[game_state.correct_option_idx]}: ${game_state.options["pt"][game_state.correct_option_idx]}`;
   } else if (curr_stage === 3) {
     preview_text.innerText = "Displaying Final Leaderboard";
   } else {
-    preview_text.innerText = `Q${game_state.curr_question_idx + 1}: ${game_state.question_text["pt"]}`;
+    preview_stage.innerText += question_info_str;
+    preview_text.innerText = `${LETTERS[0]}: ${game_state.options["pt"][0]}
+                              ${LETTERS[1]}: ${game_state.options["pt"][1]}`;
   }
 
   //------------------------------
