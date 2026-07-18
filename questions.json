@@ -1,7 +1,7 @@
 [
   {
     "id": 0,
-    "info": "ATL @ BOS (Danilo Gallinari) | Called 3 and the call stood",
+    "info": "ATL @ BOS (Danilo Gallinari) | Called 3 - the call stood",
     "options": {
       "en": ["3-point shot", "2-point shot"],
       "es": ["Tiro de 3 puntos", "Tiro de 2 puntos"],
@@ -21,7 +21,7 @@
   },
   {
     "id": 2,
-    "info": "ATL @ LAL (Russel Westbrook) | Called ALT ball and the call stood",
+    "info": "ATL @ LAL (Russel Westbrook) | Called ALT ball - the call stood",
     "options": {
       "en": ["Possession for L.A Lakers (purple uniform)", "Possession for Atlanta Hawks (white uniform)"],
       "es": ["Posesión de L.A Lakers (uniforme morado)", "Posesión de Atlanta Hawks (uniforme blanco)"],
@@ -41,7 +41,7 @@
   },
   {
     "id": 4,
-    "info": "NOP @ NYK 2026/03/24 (Mikal Bridges) | Called 2 and overturned to 3",
+    "info": "NOP @ NYK 2026/03/24 (Mikal Bridges) | Called 2 - overturned to 3",
     "options": {
       "en": ["3-point shot", "2-point shot"],
       "es": ["Tiro de 3 puntos", "Tiro de 2 puntos"],
@@ -51,7 +51,7 @@
   },
   {
     "id": 5,
-    "info": "ATL @ BKN 2026/04/03 (Nickeil Alexander Walker) | Called 2 and overturned to 3",
+    "info": "ATL @ BKN 2026/04/03 (Nickeil Alexander Walker) | Called 2 - overturned to 3",
     "options": {
       "en": ["3-point shot", "2-point shot"],
       "es": ["Tiro de 3 puntos", "Tiro de 2 puntos"],
@@ -61,7 +61,7 @@
   },
   {
     "id": 6,
-    "info": "CLE @ DET 2026/05/17 (Daniss Jenkins) | Called 2 and overturned to 3",
+    "info": "CLE @ DET 2026/05/17 (Daniss Jenkins) | Called 2 - overturned to 3",
     "options": {
       "en": ["3-point shot", "2-point shot"],
       "es": ["Tiro de 3 puntos", "Tiro de 2 puntos"],
@@ -71,7 +71,7 @@
   },
   {
     "id": 7,
-    "info": "SAS @ MIN 2026/05/15 (Anthony Edwards) | Called 3 overturned to 2",
+    "info": "SAS @ MIN 2026/05/15 (Anthony Edwards) | Called 3 - overturned to 2",
     "options": {
       "en": ["3-point shot", "2-point shot"],
       "es": ["Tiro de 3 puntos", "Tiro de 2 puntos"],
@@ -81,7 +81,7 @@
   },
   {
     "id": 8,
-    "info": "OKC @ SAS 2026/05/28 (Shai Gilgeous-Alexander) | Called 3 and overturned to 2",
+    "info": "OKC @ SAS 2026/05/28 (Shai Gilgeous-Alexander) | Called 3 - overturned to 2",
     "options": {
       "en": ["3-point shot", "2-point shot"],
       "es": ["Tiro de 3 puntos", "Tiro de 2 puntos"],
@@ -91,7 +91,7 @@
   },
   {
     "id": 9,
-    "info": "SAS @ OKC 2026/05/20 (Chet Holmgren) | Called 3 and overturned to 2",
+    "info": "SAS @ OKC 2026/05/20 (Chet Holmgren) | Called 3 - overturned to 2",
     "options": {
       "en": ["3-point shot", "2-point shot"],
       "es": ["Tiro de 3 puntos", "Tiro de 2 puntos"],
@@ -156,6 +156,176 @@
       "en": ["Basket is good", "Basket is no good, time expired"],
       "es": ["Canasta válida", "Canasta no válida, tiempo expirado"],
       "pt": ["Cesta válida", "Cesta inválida, tempo expirado"]
+    },
+    "correct_option_idx": 1
+  },
+  {
+    "id": 16,
+    "info": "SAS @ NYK 2026/06/08 (Dylan Harper) | Called SAS ball - overturned to NYK ball",
+    "options": {
+      "en": ["Possession for San Antonio Spurs", "Possession for New York Knicks"],
+      "es": ["Posesión de San Antonio Spurs", "Posesión de New York Knicks"],
+      "pt": ["Posse do San Antonio Spurs", "Posse do New York Knicks"]
+    },
+    "correct_option_idx": 1
+  },
+  {
+    "id": 17,
+    "info": "GSW @ PHX 2026/04/17 (De’Anthony Melton) | Called PHX ball - overturned to GSW ball",
+    "options": {
+      "en": ["Possession for Golden State Warriors", "Possession for Phoenix Suns"],
+      "es": ["Posesión de Golden State Warriors", "Posesión de Phoenix Suns"],
+      "pt": ["Posse do Golden State Warriors", "Posse do Phoenix Suns"]
+    },
+    "correct_option_idx": 0
+  },
+  {
+    "id": 18,
+    "info": "NOP @ HOU 2026/03/13 (Yves Missi) | Called NOP ball - overturned to HOU ball",
+    "options": {
+      "en": ["Possession for New Orleans Pelicans", "Possession for Houston Rockets"],
+      "es": ["Posesión de New Orleans Pelicans", "Posesión de Houston Rockets"],
+      "pt": ["Posse do New Orleans Pelicans", "Posse do Houston Rockets"]
+    },
+    "correct_option_idx": 1
+  },
+  {
+    "id": 19,
+    "info": "DET @ SAS 2026/03/05 (Dylan Harper) | Called SAS ball - overturned to DET ball",
+    "options": {
+      "en": ["Possession for Detroit Pistons", "Possession for San Antonio Spurs"],
+      "es": ["Posesión de Detroit Pistons", "Posesión de San Antonio Spurs"],
+      "pt": ["Posse do Detroit Pistons", "Posse do San Antonio Spurs"]
+    },
+    "correct_option_idx": 0
+  },
+  {
+    "id": 20,
+    "info": "MEM @ IND 2026/03/01 (Jay Huff) | Called IND ball - the call stood",
+    "options": {
+      "en": ["Possession for Memphis Grizzlies", "Possession for Indiana Pacers"],
+      "es": ["Posesión de Memphis Grizzlies", "Posesión de Indiana Pacers"],
+      "pt": ["Posse do Memphis Grizzlies", "Posse do Indiana Pacers"]
+    },
+    "correct_option_idx": 0
+  },
+  {
+    "id": 21,
+    "info": "NYK @ SAS 2026/06/05 (Karl-Anthony Towns) | Called goaltending - ball hit backboard first",
+    "options": {
+      "en": ["Goaltending violation", "Legal block"],
+      "es": ["Violación de goaltending", "Tapón legal"],
+      "pt": ["Violação de goaltending", "Toco legal"]
+    },
+    "correct_option_idx": 0
+  },
+  {
+    "id": 22,
+    "info": "OKC @ SAS 2026/05/22 (Chet Holmgren) | Called goaltending - ball hit backboard first",
+    "options": {
+      "en": ["Goaltending violation", "Legal block"],
+      "es": ["Violación de goaltending", "Tapón legal"],
+      "pt": ["Violação de goaltending", "Toco legal"]
+    },
+    "correct_option_idx": 0
+  },
+  {
+    "id": 23,
+    "info": "MIN @ DEN 2026/04/20 (Jaden McDaniels) | Called goaltending - ball on its downward flight",
+    "options": {
+      "en": ["Goaltending violation", "Legal block"],
+      "es": ["Violación de goaltending", "Tapón legal"],
+      "pt": ["Violação de goaltending", "Toco legal"]
+    },
+    "correct_option_idx": 0
+  },
+  {
+    "id": 24,
+    "info": "DET @ ORL 2026/04/06 (Ausar Thompson) | Called goaltending - ball on its downward flight",
+    "options": {
+      "en": ["Goaltending violation", "Legal block"],
+      "es": ["Violación de goaltending", "Tapón legal"],
+      "pt": ["Violação de goaltending", "Toco legal"]
+    },
+    "correct_option_idx": 0
+  },
+  {
+    "id": 25,
+    "info": "PHI @ WAS 2025/10/28 (Adem Bona) | Called goaltending – call overturned",
+    "options": {
+      "en": ["Goaltending violation", "Legal block"],
+      "es": ["Violación de goaltending", "Tapón legal"],
+      "pt": ["Violação de goaltending", "Toco legal"]
+    },
+    "correct_option_idx": 1
+  },
+  {
+    "id": 26,
+    "info": "POR @ DAL 2025/11/16 (Cooper Flagg) | Called goaltending - call overturned",
+    "options": {
+      "en": ["Goaltending violation", "Legal block"],
+      "es": ["Violación de goaltending", "Tapón legal"],
+      "pt": ["Violação de goaltending", "Toco legal"]
+    },
+    "correct_option_idx": 1
+  },
+  {
+    "id": 27,
+    "info": "PHI @ MIN 2026/02/22 (Tyrese Maxey) | Called charge - overturned to blocking foul",
+    "options": {
+      "en": ["Blocking foul", "Charging foul"],
+      "es": ["Falta defensiva de bloqueo", "Falta ofensiva de carga"],
+      "pt": ["Falta defensiva de bloqueio", "Falta ofensiva de carga"]
+    },
+    "correct_option_idx": 0
+  },
+  {
+    "id": 28,
+    "info": "IND @ BKN 2026/02/11 (Nolan Traore) | Called charge - overturned to blocking foul",
+    "options": {
+      "en": ["Blocking foul", "Charging foul"],
+      "es": ["Falta defensiva de bloqueo", "Falta ofensiva de carga"],
+      "pt": ["Falta defensiva de bloqueio", "Falta ofensiva de carga"]
+    },
+    "correct_option_idx": 0
+  },
+  {
+    "id": 29,
+    "info": "IND @ ORL 2026/01/04 (Paolo Banchero) | Called charge - overturned to blocking foul",
+    "options": {
+      "en": ["Blocking foul", "Charging foul"],
+      "es": ["Falta defensiva de bloqueo", "Falta ofensiva de carga"],
+      "pt": ["Falta defensiva de bloqueio", "Falta ofensiva de carga"]
+    },
+    "correct_option_idx": 0
+  },
+  {
+    "id": 30,
+    "info": "BOS @ DAL 2026/02/03 (Luka Garza) | Called blocking - overturned to charge",
+    "options": {
+      "en": ["Blocking foul", "Charging foul"],
+      "es": ["Falta defensiva de bloqueo", "Falta ofensiva de carga"],
+      "pt": ["Falta defensiva de bloqueio", "Falta ofensiva de carga"]
+    },
+    "correct_option_idx": 1
+  },
+  {
+    "id": 31,
+    "info": "CLE @ MIL 2026/03/17 (Dennis Schroder) | Called blocking - overturned to charge",
+    "options": {
+      "en": ["Blocking foul", "Charging foul"],
+      "es": ["Falta defensiva de bloqueo", "Falta ofensiva de carga"],
+      "pt": ["Falta defensiva de bloqueio", "Falta ofensiva de carga"]
+    },
+    "correct_option_idx": 1
+  },
+  {
+    "id": 32,
+    "info": "GSW @ CLE 2025/12/06 (Darius Garland) | Called blocking - overturned to charge",
+    "options": {
+      "en": ["Blocking foul", "Charging foul"],
+      "es": ["Falta defensiva de bloqueo", "Falta ofensiva de carga"],
+      "pt": ["Falta defensiva de bloqueio", "Falta ofensiva de carga"]
     },
     "correct_option_idx": 1
   }
