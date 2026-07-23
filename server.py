@@ -316,12 +316,15 @@ async def on_disconnect(sid):
   if sid in sid_to_player_idx:
     player_idx = sid_to_player_idx[sid]
 
-    # Mutate the world state
-    game_state["players"][player_idx]["is_online"] = False
-    log(f"{sid}:{game_state['players'][player_idx]['id']}", "Player Disconnected.")
-
     # Free the memory in our pointer table to prevent a memory leak
     del sid_to_player_idx[sid]
+
+    if player_idx not in sid_to_player_idx.values():
+      # Mutate the world state
+      game_state["players"][player_idx]["is_online"] = False
+      log(f"{sid}:{game_state['players'][player_idx]['id']}", "Player Disconnected.")
+    else:
+      log(f"{sid}:{game_state['players'][player_idx]['id']}", "Device Disconnected, but player is online on another device.")
 
     # Broadcast the dropped connection to the Admin
     await sio.emit("state_update", game_state)
