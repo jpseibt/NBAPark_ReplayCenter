@@ -68,8 +68,9 @@ game_state = {
   "stage": GameStage.IDLE.value, # Store the raw integer
   "curr_question_idx": -1,       # Traversal index (0, 1, 2, ...)
   "question_db_id": -1,          # Maps to QUESTION_DB ID
-  "info": "",                    # String containing information about the play (teams, date, player, play outcome)
-  "options": [],                 # The array of strings for the buttons
+  "context": "",                 # String containing info about the game and player involved (teams, date, player)
+  "reveal_info": [],             # Array of strings containing info about the referee decision for the play (en, es, pt)
+  "options": [],                 # Array of strings for the buttons (en, es, pt)
   "correct_option_idx": -1,      # -1 when hidden, updated on REVEAL
   "trans_playdirection": PlayDirectionCmd.FORWARD.value,
   "trans_speed_idx": 0,
@@ -481,8 +482,8 @@ def process_cmd_start():
   # Copy text and options into public state
   active_question = QUESTION_DB[next_question_idx]
   game_state["question_db_id"] = active_question["id"]
-  # Extract information until '|' separator -> "info": "NYK @ SAS 2026/06/13 (Devin Vassel) | Basket confirmed good"
-  game_state["info"] = active_question["info"].partition('|')[0].rstrip();
+  game_state["context"] = active_question["context"]
+  game_state["reveal_info"] = active_question["reveal_info"]
   game_state["options"] = active_question["options"]
   game_state["correct_option_idx"] = -1
 
@@ -516,7 +517,7 @@ def process_cmd_reveal():
     return
 
   game_state["stage"] = GameStage.REVEAL.value
-  game_state["info"] = QUESTION_DB[game_state["curr_question_idx"]]["info"];
+  game_state["reveal_info"] = QUESTION_DB[game_state["curr_question_idx"]]["reveal_info"];
   correct_answer_idx = QUESTION_DB[game_state["curr_question_idx"]]["correct_option_idx"]
   game_state["correct_option_idx"] = correct_answer_idx
 
@@ -603,7 +604,8 @@ def process_cmd_reset():
   game_state["stage"] = GameStage.IDLE.value
   game_state["curr_question_idx"] = -1
   game_state["question_db_id"] = -1
-  game_state["info"] = ""
+  game_state["context"] = ""
+  game_state["reveal_info"] = []
   game_state["options"] = []
   game_state["correct_option_idx"] = -1
   game_state["trans_playdirection"] = PlayDirectionCmd.FORWARD.value

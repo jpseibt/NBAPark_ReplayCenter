@@ -151,7 +151,7 @@ function renderFrame(game_state) {
   //
   // Update Question Preview
   const stages = ["IDLE", "QUESTION ACTIVE", "REVEAL", "LEADERBOARD"];
-  const question_info_str = ` | #${game_state.curr_question_idx + 1} id.${game_state.question_db_id} | ${game_state.info}`;
+  const question_info_str = ` | #${game_state.curr_question_idx + 1} id.${game_state.question_db_id} | ${game_state.context}\n* ${game_state.reveal_info["pt"]}`;
   preview_stage.innerText = `STAGE: ${stages[curr_stage]}`;
 
   if (curr_stage === 0) {

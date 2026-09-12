@@ -141,7 +141,7 @@ function renderFrame(game_state) {
 
   // --- STATE: QUESTION ACTIVE ---
   if (game_state.stage === 1) {
-    play_info.innerText = game_state.info;
+    play_info.innerText = game_state.context;
     question_text.innerText = UI_STRINGS[local_lang].question;
 
     // Set audio track
@@ -189,7 +189,7 @@ function renderFrame(game_state) {
 
   // --- STATE: REVEAL ---
   if (game_state.stage === 2) {
-    play_info.innerText = game_state.info;
+    play_info.innerText = `${game_state.context}\n${game_state.reveal_info[local_lang]}`
     question_text.innerText = UI_STRINGS[local_lang].question;
 
     const answered_right = my_player.is_confirmed && (my_player.selected_option === game_state.correct_option_idx);
