@@ -7,9 +7,12 @@
   <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
 </head>
 <body class="leaderboard-body">
-  <button class="btn btn-fullscreen" onclick="document.documentElement.requestFullscreen(); this.style.display='none'">
-      ⛶ Fullscreen
-  </button>
+
+  <div class="lang-selector-container">
+    <button id=btn-fullscreen class="btn btn-fullscreen lang-btn-small" onclick="document.documentElement.requestFullscreen()">
+        ⛶ Fullscreen
+    </button>
+  </div>
 
   <img src="/static/assets/nba_replay_center.png" class="brand-logo-lb" alt="NBA Replay Center">
   <div id="leaderboard-container">

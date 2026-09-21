@@ -113,16 +113,63 @@
 }
 
 
+/*
+ ==================================================
+  LANGUAGE SELECTOR AND FULLSCREEN BUTTON
+ ==================================================
+*/
+.lang-selector-container {
+  display: flex;
+  gap: 10px;
+  z-index: 10;
+}
+
 .btn-fullscreen {
+  color: #999999;
+  cursor: pointer;
+}
+
+.lang-btn {
+  color: #999999;
+  padding: 8px;
+}
+
+.lang-btn-small {
+  font-size: 14px;
+}
+
+.lang-btn-player {
+  font-size: 20px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.btn-fullscreen.is-down {
+  color: #dddddd;
+  filter: brightness(1.2);
+}
+
+.lang-btn.is-down {
+  color: #dddddd;
+  filter: brightness(1.2);
+}
+
+.player-body .lang-selector-container {
+  position: absolute;
+  top: 10px;
+  left: 20px;
+}
+
+.operator-body .lang-selector-container {
   position: absolute;
   top: 10px;
   right: 10px;
-  background: #333;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 4px;
-  cursor: pointer;
+}
+
+.leaderboard-body .lang-selector-container {
+  position: absolute;
+  top: 10px;
+  right: 10px;
 }
 
 /*
@@ -163,6 +210,7 @@
   border: 1px solid #555;
   overflow-x: auto;
 }
+
 
 /*
  ==================================================
@@ -533,33 +581,6 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
 }
 
-#lang-selector {
-  position: absolute;
-  top: 10px;
-  left: 20px;
-  display: flex;
-  gap: 10px;
-  z-index: 10;
-}
-
-.lang-btn {
-  padding: 8px;
-  font-size: 20px;
-  font-weight: bold;
-  letter-spacing: 1px;
-  color: #999999;
-  filter: brightness(0.8);
-}
-
-.lang-btn.is-down {
-  color: #dddddd;
-  filter: brightness(1.2);
-}
-
-.lang-btn img {
-  width: 14px;
-  border-radius: 2px;
-}
 
 /* =========================================
    LEADERBOARD STYLES (TV OUTPUT)

@@ -4,8 +4,29 @@ const socket = io(SERVER_URL, {
   auth: { client_id: "leaderboard" }
 });
 
-const ranking_list = document.getElementById("ranking-list");
-const title = document.getElementById("leaderboard-title");
+const ranking_list   = document.getElementById("ranking-list");
+const title          = document.getElementById("leaderboard-title");
+const btn_fullscreen = document.getElementById("btn-fullscreen");
+
+window.toggleFullscreen = function() {
+  if (!document.fullscreenElement) {
+    const doc = window.document.documentElement;
+    // Check for vendor prefixes if running an older Chromium build
+    const requestFullScreen = doc.requestFullscreen || doc.webkitRequestFullscreen || doc.mozRequestFullScreen || doc.msRequestFullscreen;
+
+    if (requestFullScreen) {
+      requestFullScreen.call(doc).catch(err => {
+        console.warn("Fullscreen request denied by browser:", err);
+      });
+    }
+  } else {
+    document.exitFullscreen()
+  }
+}
+
+document.addEventListener("fullscreenchange", () => {
+  btn_fullscreen.style.display = document.fullscreenElement ? "none" : "";
+});
 
 socket.on("connect", () => {
   console.log("Leaderboard Engine Connected.");

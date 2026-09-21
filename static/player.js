@@ -104,13 +104,13 @@ socket.on("audio_command", (cmd) => {
 });
 
 // DOM Elements
-const btn_en_lang = document.getElementById("en-lang-btn");
-const btn_pt_lang = document.getElementById("pt-lang-btn");
-const btn_es_lang = document.getElementById("es-lang-btn");
-const play_info = document.getElementById("play-info");
-const question_text = document.getElementById("question-text");
+const btn_en_lang       = document.getElementById("en-lang-btn");
+const btn_pt_lang       = document.getElementById("pt-lang-btn");
+const btn_es_lang       = document.getElementById("es-lang-btn");
+const play_info         = document.getElementById("play-info");
+const question_text     = document.getElementById("question-text");
 const options_container = document.getElementById("options-container");
-const action_container = document.getElementById("action-container");
+const action_container  = document.getElementById("action-container");
 
 // Render
 socket.on("state_update", (game_state) => {

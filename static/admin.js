@@ -1,6 +1,55 @@
-const SERVER_URL = window.location.protocol + "//" + window.location.host;
+let local_lang = "pt";
 
+const UI_STRINGS = {
+  "en": {
+    "reveal": "Finish the current question and reveal the answer?\nMake sure every player have confirmed their answers.",
+    "results": "End the game and show the final leaderboard?",
+    "reset": "Reset scores and shuffle questions for new session?"
+  },
+  "pt": {
+    "reveal": "Encerrar a pergunta atual e revelar a resposta?\nCertifique-se de que todos os jogadores confirmaram suas respostas.",
+    "results": "Encerrar o jogo e mostrar a classificação final?",
+    "reset": "Zerar as pontuações e embaralhar as perguntas para uma nova sessão?"
+  },
+  "es": {
+    "reveal": "¿Terminar la pregunta actual y revelar la respuesta?\nAsegúrate de que todos los jugadores hayan confirmado sus respuestas.",
+    "results": "¿Terminar el juego y mostrar la tabla de posiciones final?",
+    "reset": "¿Restablecer las puntuaciones y mezclar las preguntas para una nueva sesión?"
+  }
+};
+
+// Reference to the latest state to re-render if an user switch languages mid-question
 let latest_game_state = null;
+
+window.setLanguage = function(lang_code) {
+  local_lang = lang_code;
+  // If the game is running, immediately re-render the screen with the new language
+  if (latest_game_state) {
+    renderFrame(latest_game_state);
+  }
+};
+
+window.toggleFullscreen = function() {
+  if (!document.fullscreenElement) {
+    const doc = window.document.documentElement;
+    // Check for vendor prefixes if running an older Chromium build
+    const requestFullScreen = doc.requestFullscreen || doc.webkitRequestFullscreen || doc.mozRequestFullScreen || doc.msRequestFullscreen;
+
+    if (requestFullScreen) {
+      requestFullScreen.call(doc).catch(err => {
+        console.warn("Fullscreen request denied by browser:", err);
+      });
+    }
+  } else {
+    document.exitFullscreen()
+  }
+}
+
+document.addEventListener("fullscreenchange", () => {
+  btn_fullscreen.classList.toggle("is-down", document.fullscreenElement != null);
+});
+
+const SERVER_URL = window.location.protocol + "//" + window.location.host;
 
 const socket = io(SERVER_URL, {
   auth: { client_id: "admin" }
@@ -9,29 +58,33 @@ const socket = io(SERVER_URL, {
 // DOM Elements
 const online_stats = document.getElementById("online-stats");
 
-const btn_start = document.getElementById("btn-op-start");
-const btn_replay = document.getElementById("btn-op-replay");
-const btn_reveal = document.getElementById("btn-op-reveal");
-const btn_results = document.getElementById("btn-op-results");
-const btn_reset = document.getElementById("btn-op-reset");
-const btn_trans_rev = document.getElementById("btn-trans-rev");
-const btn_trans_pause= document.getElementById("btn-trans-pause");
-const btn_trans_fwd = document.getElementById("btn-trans-fwd");
+const btn_en_lang     = document.getElementById("en-lang-btn");
+const btn_pt_lang     = document.getElementById("pt-lang-btn");
+const btn_es_lang     = document.getElementById("es-lang-btn");
+const btn_fullscreen  = document.getElementById("btn-fullscreen");
+const btn_start       = document.getElementById("btn-op-start");
+const btn_replay      = document.getElementById("btn-op-replay");
+const btn_reveal      = document.getElementById("btn-op-reveal");
+const btn_results     = document.getElementById("btn-op-results");
+const btn_reset       = document.getElementById("btn-op-reset");
+const btn_trans_rev   = document.getElementById("btn-trans-rev");
+const btn_trans_pause = document.getElementById("btn-trans-pause");
+const btn_trans_fwd   = document.getElementById("btn-trans-fwd");
 const btn_trans_speed = document.getElementById("btn-trans-speed");
-const btn_video_1 = document.getElementById("btn-video-1");
-const btn_video_2 = document.getElementById("btn-video-2");
-const btn_video_3 = document.getElementById("btn-video-3");
-const btn_video_4 = document.getElementById("btn-video-4");
-const btn_video_all = document.getElementById("btn-video-all");
+const btn_video_1     = document.getElementById("btn-video-1");
+const btn_video_2     = document.getElementById("btn-video-2");
+const btn_video_3     = document.getElementById("btn-video-3");
+const btn_video_4     = document.getElementById("btn-video-4");
+const btn_video_all   = document.getElementById("btn-video-all");
 
 const preview_stage = document.getElementById("preview-stage");
-const preview_text = document.getElementById("preview-text");
-const matrix_body = document.getElementById("matrix-body");
+const preview_text  = document.getElementById("preview-text");
+const matrix_body   = document.getElementById("matrix-body");
 
 const confirm_dialog = document.getElementById("confirm-dialog");
 const dialog_message = document.getElementById("dialog-message");
-const btn_cancel = document.getElementById("dialog-btn-cancel");
-const btn_confirm = document.getElementById("dialog-btn-confirm");
+const btn_cancel     = document.getElementById("dialog-btn-cancel");
+const btn_confirm    = document.getElementById("dialog-btn-confirm");
 
 let pending_command = null; // Stores destructive commands for confirmation
 
@@ -65,21 +118,21 @@ window.send_command = function(action_string) {
   // Show dialog to confirm destructive commands
   if (action_string === "REVEAL") {
     pending_command = action_string;
-    dialog_message.innerText = "Finish the current question and reveal the answer?\nMake sure every player have confirmed their answers.";
+    dialog_message.innerText = UI_STRINGS[local_lang].reveal;
     confirm_dialog.showModal();
     return;
   }
   else if (action_string === "RESULTS" && latest_game_state.stage !== 3) {
     if (latest_game_state.stage != 0) {
       pending_command = action_string;
-      dialog_message.innerText = "End the game and show the final leaderboard?";
+      dialog_message.innerText = UI_STRINGS[local_lang].results;
       confirm_dialog.showModal();
     }
     return;
   }
   else if (action_string === "RESET") {
     pending_command = action_string;
-    dialog_message.innerText = "Reset scores and shuffle questions for new session?";
+    dialog_message.innerText = UI_STRINGS[local_lang].reset;
     confirm_dialog.showModal();
     return;
   }
@@ -100,6 +153,11 @@ socket.on("state_update", (game_state) => {
 
 function renderFrame(game_state) {
   const curr_stage = game_state.stage;
+
+  // Language buttons state
+  btn_en_lang.classList.toggle("is-down", local_lang === "en");
+  btn_pt_lang.classList.toggle("is-down", local_lang === "pt");
+  btn_es_lang.classList.toggle("is-down", local_lang === "es");
 
   // Calculate Network Health
   const online_count = game_state.players.filter(p => p.is_online).length;
@@ -151,20 +209,20 @@ function renderFrame(game_state) {
   //
   // Update Question Preview
   const stages = ["IDLE", "QUESTION ACTIVE", "REVEAL", "LEADERBOARD"];
-  const question_info_str = ` | #${game_state.curr_question_idx + 1} id.${game_state.question_db_id} | ${game_state.context}\n* ${game_state.reveal_info["pt"]}`;
+  const question_info_str = ` | #${game_state.curr_question_idx + 1} id.${game_state.question_db_id} | ${game_state.context}\n* ${game_state.reveal_info[local_lang]}`;
   preview_stage.innerText = `STAGE: ${stages[curr_stage]}`;
 
   if (curr_stage === 0) {
     preview_text.innerText = "Awaiting game start...";
   } else if (curr_stage === 2) {
     preview_stage.innerText += question_info_str;
-    preview_text.innerText = `${LETTERS[game_state.correct_option_idx]}: ${game_state.options["pt"][game_state.correct_option_idx]}`;
+    preview_text.innerText = `${LETTERS[game_state.correct_option_idx]}: ${game_state.options[local_lang][game_state.correct_option_idx]}`;
   } else if (curr_stage === 3) {
     preview_text.innerText = "Displaying Final Leaderboard";
   } else {
     preview_stage.innerText += question_info_str;
-    preview_text.innerText = `${LETTERS[0]}: ${game_state.options["pt"][0]}
-                              ${LETTERS[1]}: ${game_state.options["pt"][1]}`;
+    preview_text.innerText = `${LETTERS[0]}: ${game_state.options[local_lang][0]}
+                              ${LETTERS[1]}: ${game_state.options[local_lang][1]}`;
   }
 
   //------------------------------

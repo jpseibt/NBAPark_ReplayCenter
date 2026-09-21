@@ -8,11 +8,23 @@
 </head>
 <body class="operator-body">
 
+  <div class="lang-selector-container">
+    <button id="en-lang-btn" class="btn lang-btn lang-btn-small" onclick="setLanguage('en')">
+      🇺🇸 EN
+    </button>
+    <button id="pt-lang-btn" class="btn lang-btn lang-btn-small" onclick="setLanguage('pt')">
+      🇧🇷 PT
+    </button>
+    <button id="es-lang-btn" class="btn lang-btn lang-btn-small" onclick="setLanguage('es')">
+      🇪🇸 ES
+    </button>
 
-  <div class="operator-header">
-    <button class="btn btn-fullscreen" onclick="document.documentElement.requestFullscreen(); this.style.display='none'">
+    <button id="btn-fullscreen" class="btn btn-fullscreen" onclick="toggleFullscreen()">
       ⛶ Fullscreen
     </button>
+  </div>
+
+  <div class="operator-header">
     <img src="/static/assets/nba_replay_center.png" class="brand-logo-op" alt="NBA Replay Center">
     <div id="online-stats" class="operator-stats">Network: 0/6 Online </div>
   </div>
